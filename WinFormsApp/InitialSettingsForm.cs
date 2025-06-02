@@ -1,6 +1,7 @@
 ﻿using DataLayer;
 using System.Windows.Forms;
 using System;
+using WinFormsApp;
 
 public partial class InitialSettingsForm : Form
 {
@@ -175,7 +176,7 @@ public partial class InitialSettingsForm : Form
 		ConfigurationManager.SaveConfiguration();
 
 		DialogResult = DialogResult.OK;
-		Close();
+		this.Close();
 	}
 
 	private void InitialSettingsForm_Load(object sender, EventArgs e)
