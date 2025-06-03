@@ -79,6 +79,24 @@ namespace WinFormsApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string Close {
+            get {
+                return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Favorite team selected:.
+        /// </summary>
+        internal static string FavoriteTeam {
+            get {
+                return ResourceManager.GetString("FavoriteTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Croatian.
         /// </summary>
         internal static string LanguageCroatian {
@@ -124,6 +142,24 @@ namespace WinFormsApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select a favorite team.
+        /// </summary>
+        internal static string PickFavoriteTeam {
+            get {
+                return ResourceManager.GetString("PickFavoriteTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string SettingsTitle {
+            get {
+                return ResourceManager.GetString("SettingsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Men.
         /// </summary>
         internal static string TeamMen {
@@ -138,6 +174,15 @@ namespace WinFormsApp.Resources {
         internal static string TeamPicker {
             get {
                 return ResourceManager.GetString("TeamPicker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select your favorite team:.
+        /// </summary>
+        internal static string TeamSelect {
+            get {
+                return ResourceManager.GetString("TeamSelect", resourceCulture);
             }
         }
         

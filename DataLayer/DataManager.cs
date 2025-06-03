@@ -20,7 +20,7 @@ namespace DataLayer
 		public async Task<List<Team>> GetTeamsAsync(string championship)
 		{
 			if (ConfigurationManager.UseApiData)
-				return await apiService.GetTeamsAsync(championship);
+				return await ApiService.GetTeamsAsync(championship);
 			else
 				return jsonDataService.GetTeamsFromJson(championship);
 		}
@@ -28,7 +28,7 @@ namespace DataLayer
 		public async Task<List<Match>> GetMatchesAsync(string championship)
 		{
 			if (ConfigurationManager.UseApiData)
-				return await apiService.GetMatchesAsync(championship);
+				return await ApiService.GetMatchesAsync(championship);
 			else
 				return jsonDataService.GetMatchesFromJson(championship);
 		}

@@ -147,4 +147,19 @@
   <data name="modalSettingsError" xml:space="preserve">
     <value>Please select Language and Tournament</value>
   </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="TeamSelect" xml:space="preserve">
+    <value>Select your favorite team:</value>
+  </data>
+  <data name="FavoriteTeam" xml:space="preserve">
+    <value>Favorite team selected:</value>
+  </data>
+  <data name="PickFavoriteTeam" xml:space="preserve">
+    <value>Select a favorite team</value>
+  </data>
 </root>

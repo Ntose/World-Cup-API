@@ -7,21 +7,35 @@ namespace WorldCupStats.WinFormsApp.Forms
 {
 	public partial class SettingsForm : Form
 	{
+
+		private ComboBox comboLanguage;
+		private Button btnOk;
+		private Button btnCancel;
+		private Label label1;
+		private Label label2;
+		private ComboBox comboTournament;
+
 		public SettingsForm()
 		{
 			InitializeComponent();
-			this.AcceptButton = btnOk;
-			this.CancelButton = btnCancel;
 		}
 
 		private void btnOK_Click(object sender, EventArgs e)
 		{
-			string lang = comboLanguage.SelectedItem.ToString() == "English" ? "en" : "hr";
-			string tour = comboTournament.SelectedItem.ToString() == "Men" ? "men" : "women";
+			if (comboLanguage.SelectedItem == null || comboTournament.SelectedItem == null)
+			{
+				MessageBox.Show(Resources.modalSettingsError);
+				return;
+			}
 
-			ConfigManager.SaveSettings(lang, tour);
-			DialogResult = DialogResult.OK;
-			Close();
+			string tournament = comboTournament.SelectedItem.ToString() == Resources.TeamMen ? "men" : "women";
+			string language = comboLanguage.SelectedItem.ToString() == Resources.LanguageCroatian ? "hr" : "en";
+
+			// Save settings
+			ConfigManager.SaveSettings(language, tournament);
+
+			this.DialogResult = DialogResult.OK;
+			this.Close();
 		}
 
 		private void InitializeComponent()
@@ -70,6 +84,7 @@ namespace WorldCupStats.WinFormsApp.Forms
 			btnCancel.TabIndex = 3;
 			btnCancel.Text = "Cancel";
 			btnCancel.UseVisualStyleBackColor = true;
+			btnCancel.Click += btnCancel_Click_1;
 			// 
 			// label1
 			// 
@@ -107,16 +122,9 @@ namespace WorldCupStats.WinFormsApp.Forms
 
 		private void btnCancel_Click(object sender, EventArgs e)
 		{
-			DialogResult = DialogResult.Cancel;
-			Close();
+			//DialogResult = DialogResult.Cancel;
+			//Close();
 		}
-
-		private ComboBox comboLanguage;
-		private Button btnOk;
-		private Button btnCancel;
-		private Label label1;
-		private Label label2;
-		private ComboBox comboTournament;
 
 		private void label1_Click(object sender, EventArgs e)
 		{
@@ -133,25 +141,45 @@ namespace WorldCupStats.WinFormsApp.Forms
 			comboTournament.Items[1] = Resources.TeamWomen;
 			btnOk.Text = Resources.btnApply;
 			btnCancel.Text = Resources.btnCancel;
+			AppSettings appSettings = ConfigManager.LoadSettings();
+			comboLanguage.SelectedItem = appSettings.Language == "en" ? "English" : "Croatian";
+			if (appSettings.Tournament == "men")
+				comboTournament.SelectedItem = comboTournament.Items[0];
+			else
+				comboTournament.SelectedItem = comboTournament.Items[1];
+			this.Text = Resources.SettingsTitle;
+			this.AcceptButton = btnOk;
+			//this.CancelButton = btnCancel;
 
 		}
 
 		private void btnOk_Click_1(object sender, EventArgs e)
 		{
 			if (comboLanguage.SelectedItem == null || comboTournament.SelectedItem == null)
-            {
-                MessageBox.Show(Resources.modalSettingsError);
-                return;
-            }
+			{
+				MessageBox.Show(Resources.modalSettingsError);
+				return;
+			}
 
-			string tournament = comboTournament.SelectedText.ToString() == Resources.TeamMen ? "men" : "women";
-            string language = comboLanguage.SelectedItem.ToString() == Resources.LanguageCroatian ? "hr" : "en";
+			string tournament = comboTournament.SelectedItem.ToString() == Resources.TeamMen ? "men" : "women";
+			string language = comboLanguage.SelectedItem.ToString() == Resources.LanguageCroatian ? "hr" : "en";
 
-            // Save settings
-            ConfigManager.SaveSettings(language, tournament);
+			// Save settings
+			ConfigManager.SaveSettings(language, tournament);
+				
+			this.DialogResult = DialogResult.OK;
+			this.Close();
+		}
 
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+		private void btnCancel_Click_1(object sender, EventArgs e)
+		{
+			this.DialogResult = DialogResult.Cancel;
+			this.Close();
+		}
+
+		private void label3_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

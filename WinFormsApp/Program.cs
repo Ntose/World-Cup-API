@@ -13,7 +13,6 @@ namespace WorldCupStats.WinFormsApp
 		[STAThread]
 		static void Main()
 		{
-			Thread.CurrentThread.CurrentUICulture = new CultureInfo("hr");
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
@@ -34,6 +33,7 @@ namespace WorldCupStats.WinFormsApp
 					}
 				}
 			}
+			Thread.CurrentThread.CurrentUICulture = new CultureInfo(settings.Language);
 
 
 			Application.Run(new MainForm());

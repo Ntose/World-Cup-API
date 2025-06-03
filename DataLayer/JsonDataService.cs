@@ -117,17 +117,15 @@ namespace DataLayer
 			{
 				EnsureJsonFolderExists();
 
-				var apiService = new ApiService();
-
 				// Download and save teams data
-				var teams = await apiService.GetTeamsAsync(championship);
+				var teams = await ApiService.GetTeamsAsync(championship);
 				string teamsFileName = championship.ToLower() == "men" ? MEN_TEAMS_FILE : WOMEN_TEAMS_FILE;
 				string teamsPath = Path.Combine(JSON_FOLDER, teamsFileName);
 				string teamsJson = JsonConvert.SerializeObject(teams, Formatting.Indented);
 				File.WriteAllText(teamsPath, teamsJson);
 
 				// Download and save matches data
-				var matches = await apiService.GetMatchesAsync(championship);
+				var matches = await ApiService.GetMatchesAsync(championship);
 				string matchesFileName = championship.ToLower() == "men" ? MEN_MATCHES_FILE : WOMEN_MATCHES_FILE;
 				string matchesPath = Path.Combine(JSON_FOLDER, matchesFileName);
 				string matchesJson = JsonConvert.SerializeObject(matches, Formatting.Indented);
