@@ -117,4 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="MainTitle" xml:space="preserve">
+    <value>World Cup Statistics</value>
+  </data>
+  <data name="LanguagePicker" xml:space="preserve">
+    <value>Language:</value>
+  </data>
+  <data name="TeamPicker" xml:space="preserve">
+    <value>Tournament:</value>
+  </data>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageCroatian" xml:space="preserve">
+    <value>Croatian</value>
+  </data>
+  <data name="TeamMen" xml:space="preserve">
+    <value>Men</value>
+  </data>
+  <data name="TeamWomen" xml:space="preserve">
+    <value>Women</value>
+  </data>
+  <data name="btnApply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="btnCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="modalSettingsError" xml:space="preserve">
+    <value>Please select Language and Tournament</value>
+  </data>
 </root>

@@ -5,7 +5,7 @@ namespace WinFormsApp
 		public MainForm()
 		{
 			InitializeComponent();
-			this.Text = Properties.Resources;
+			this.Text = Resources.Resources.MainTitle;
 		}
 	}
 }

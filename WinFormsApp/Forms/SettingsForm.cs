@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using WinFormsApp.Resources;
 using WorldCupStats.WinFormsApp.Helpers;
 
 namespace WorldCupStats.WinFormsApp.Forms
@@ -9,8 +10,8 @@ namespace WorldCupStats.WinFormsApp.Forms
 		public SettingsForm()
 		{
 			InitializeComponent();
-			comboLanguage.SelectedIndex = 0;
-			comboTournament.SelectedIndex = 0;
+			this.AcceptButton = btnOk;
+			this.CancelButton = btnCancel;
 		}
 
 		private void btnOK_Click(object sender, EventArgs e)
@@ -29,6 +30,8 @@ namespace WorldCupStats.WinFormsApp.Forms
 			comboTournament = new ComboBox();
 			btnOk = new Button();
 			btnCancel = new Button();
+			label1 = new Label();
+			label2 = new Label();
 			SuspendLayout();
 			// 
 			// comboLanguage
@@ -57,6 +60,7 @@ namespace WorldCupStats.WinFormsApp.Forms
 			btnOk.TabIndex = 2;
 			btnOk.Text = "Apply";
 			btnOk.UseVisualStyleBackColor = true;
+			btnOk.Click += btnOk_Click_1;
 			// 
 			// btnCancel
 			// 
@@ -67,15 +71,38 @@ namespace WorldCupStats.WinFormsApp.Forms
 			btnCancel.Text = "Cancel";
 			btnCancel.UseVisualStyleBackColor = true;
 			// 
+			// label1
+			// 
+			label1.AutoSize = true;
+			label1.Location = new Point(12, 15);
+			label1.Name = "label1";
+			label1.Size = new Size(80, 18);
+			label1.TabIndex = 4;
+			label1.Text = "Language:";
+			label1.Click += label1_Click;
+			// 
+			// label2
+			// 
+			label2.AutoSize = true;
+			label2.Location = new Point(12, 47);
+			label2.Name = "label2";
+			label2.Size = new Size(56, 18);
+			label2.TabIndex = 5;
+			label2.Text = "Teams:";
+			// 
 			// SettingsForm
 			// 
 			ClientSize = new Size(282, 253);
+			Controls.Add(label2);
+			Controls.Add(label1);
 			Controls.Add(btnCancel);
 			Controls.Add(btnOk);
 			Controls.Add(comboTournament);
 			Controls.Add(comboLanguage);
 			Name = "SettingsForm";
+			Load += SettingsForm_Load;
 			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		private void btnCancel_Click(object sender, EventArgs e)
@@ -87,6 +114,44 @@ namespace WorldCupStats.WinFormsApp.Forms
 		private ComboBox comboLanguage;
 		private Button btnOk;
 		private Button btnCancel;
+		private Label label1;
+		private Label label2;
 		private ComboBox comboTournament;
+
+		private void label1_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void SettingsForm_Load(object sender, EventArgs e)
+		{
+			label1.Text = Resources.LanguagePicker;
+			label2.Text = Resources.TeamPicker;
+			comboLanguage.Items[0] = Resources.LanguageEnglish;
+			comboLanguage.Items[1] = Resources.LanguageCroatian;
+			comboTournament.Items[0] = Resources.TeamMen;
+			comboTournament.Items[1] = Resources.TeamWomen;
+			btnOk.Text = Resources.btnApply;
+			btnCancel.Text = Resources.btnCancel;
+
+		}
+
+		private void btnOk_Click_1(object sender, EventArgs e)
+		{
+			if (comboLanguage.SelectedItem == null || comboTournament.SelectedItem == null)
+            {
+                MessageBox.Show(Resources.modalSettingsError);
+                return;
+            }
+
+			string tournament = comboTournament.SelectedText.ToString() == Resources.TeamMen ? "men" : "women";
+            string language = comboLanguage.SelectedItem.ToString() == Resources.LanguageCroatian ? "hr" : "en";
+
+            // Save settings
+            ConfigManager.SaveSettings(language, tournament);
+
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+		}
 	}
 }

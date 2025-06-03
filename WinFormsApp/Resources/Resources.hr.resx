@@ -117,4 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="MainTitle" xml:space="preserve">
+    <value>Svijetski Kup Statistika</value>
+  </data>
+  <data name="LanguagePicker" xml:space="preserve">
+    <value>Jezik:</value>
+  </data>
+  <data name="TeamPicker" xml:space="preserve">
+    <value>Prvenstvo:</value>
+  </data>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>Engleski</value>
+  </data>
+  <data name="LanguageCroatian" xml:space="preserve">
+    <value>Hrvatski</value>
+  </data>
+  <data name="TeamMen" xml:space="preserve">
+    <value>Muško</value>
+  </data>
+  <data name="TeamWomen" xml:space="preserve">
+    <value>Žensko</value>
+  </data>
+  <data name="btnApply" xml:space="preserve">
+    <value>Primjeni</value>
+  </data>
+  <data name="btnCancel" xml:space="preserve">
+    <value>Odustani</value>
+  </data>
+  <data name="modalSettingsError" xml:space="preserve">
+    <value>Molim Vas odaberite Jezik i Prvenstvo</value>
+  </data>
 </root>
