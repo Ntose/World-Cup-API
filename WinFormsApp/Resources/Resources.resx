@@ -162,4 +162,20 @@
   <data name="PickFavoriteTeam" xml:space="preserve">
     <value>Select a favorite team</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="DefaultPlayer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>DefaultPlayer.jpg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Star" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>star.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Heart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>heart.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AllPlayers" xml:space="preserve">
+    <value>All Players</value>
+  </data>
+  <data name="FavoritePlayers" xml:space="preserve">
+    <value>Favorite Players</value>
+  </data>
 </root>

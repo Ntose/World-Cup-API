@@ -142,9 +142,10 @@ namespace WorldCupStats.WinFormsApp.Forms
 			btnOk.Text = Resources.btnApply;
 			btnCancel.Text = Resources.btnCancel;
 			AppSettings appSettings = ConfigManager.LoadSettings();
-			comboLanguage.SelectedItem = appSettings.Language == "en" ? "English" : "Croatian";
-			if (appSettings.Tournament == "men")
+			comboLanguage.SelectedItem = appSettings.Language == "en" ? "English" : comboLanguage.Items[1];
+			if (appSettings.Tournament == "men") { }
 				comboTournament.SelectedItem = comboTournament.Items[0];
+			
 			else
 				comboTournament.SelectedItem = comboTournament.Items[1];
 			this.Text = Resources.SettingsTitle;

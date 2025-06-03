@@ -61,6 +61,15 @@ namespace WinFormsApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All Players.
+        /// </summary>
+        internal static string AllPlayers {
+            get {
+                return ResourceManager.GetString("AllPlayers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apply.
         /// </summary>
         internal static string btnApply {
@@ -88,11 +97,40 @@ namespace WinFormsApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] DefaultPlayer {
+            get {
+                object obj = ResourceManager.GetObject("DefaultPlayer", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Favorite Players.
+        /// </summary>
+        internal static string FavoritePlayers {
+            get {
+                return ResourceManager.GetString("FavoritePlayers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Favorite team selected:.
         /// </summary>
         internal static string FavoriteTeam {
             get {
                 return ResourceManager.GetString("FavoriteTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Heart {
+            get {
+                object obj = ResourceManager.GetObject("Heart", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -156,6 +194,16 @@ namespace WinFormsApp.Resources {
         internal static string SettingsTitle {
             get {
                 return ResourceManager.GetString("SettingsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Star {
+            get {
+                object obj = ResourceManager.GetObject("Star", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
