@@ -6,11 +6,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WorldCupStats.WinFormsApp.Helpers;
+using System.Drawing.Printing;
+
 
 namespace WinFormsApp.Forms
 {
@@ -19,6 +22,10 @@ namespace WinFormsApp.Forms
 	{
 		private DataGridView dgvPlayers;
 		private DataGridView dgvRanking;
+		private PrintDocument printDoc;
+		private PrintDialog printDialog;
+		private string printTitle = "Ranking List";
+
 		public RankingForm()
 		{
 			InitializeComponent();
@@ -28,6 +35,14 @@ namespace WinFormsApp.Forms
 		}
 		private void SetupGrid()
 		{
+			Button btnPrint = new Button
+			{
+				Text = "Print Ranking",
+				Location = new Point(440, 420),
+				Size = new Size(120, 30)
+			};
+			btnPrint.Click += BtnPrint_Click;
+			Controls.Add(btnPrint);
 
 			dgvPlayers = new DataGridView
 			{
@@ -134,5 +149,59 @@ namespace WinFormsApp.Forms
 
 
 		}
+		private void BtnPrint_Click(object sender, EventArgs e)
+		{
+			printDoc = new PrintDocument();
+			printDoc.PrintPage += PrintDoc_PrintPage;
+
+			printDialog = new PrintDialog
+			{
+				Document = printDoc
+			};
+
+			if (printDialog.ShowDialog() == DialogResult.OK)
+			{
+				printDoc.Print();
+			}
+		}
+		private void PrintDoc_PrintPage(object sender, PrintPageEventArgs e)
+		{
+			int x = 50;
+			int y = 100;
+			int rowHeight = 30;
+
+			Font font = new Font("Arial", 10);
+			Brush brush = Brushes.Black;
+
+			// Print title
+			e.Graphics.DrawString(printTitle, new Font("Arial", 14, FontStyle.Bold), brush, x, 40);
+
+			// Print column headers
+			for (int i = 0; i < dgvPlayers.Columns.Count; i++)
+			{
+				string header = dgvPlayers.Columns[i].HeaderText;
+				e.Graphics.DrawString(header, font, brush, x + i * 120, y);
+			}
+
+			y += rowHeight;
+
+			// Print rows
+			for (int row = 0; row < dgvPlayers.Rows.Count; row++)
+			{
+				for (int col = 0; col < dgvPlayers.Columns.Count; col++)
+				{
+					object value = dgvPlayers.Rows[row].Cells[col].Value;
+					if (value != null)
+					{
+						e.Graphics.DrawString(value.ToString(), font, brush, x + col * 120, y);
+					}
+				}
+
+				y += rowHeight;
+			}
+
+			e.HasMorePages = false; // no paging for now
+		}
+
 	}
 }
