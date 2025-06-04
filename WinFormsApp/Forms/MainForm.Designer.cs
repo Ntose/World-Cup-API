@@ -39,30 +39,31 @@
 			pnlAllPlayers = new FlowLayoutPanel();
 			pnlFavoritePlayers = new FlowLayoutPanel();
 			btnSaveFavoritePlayers = new Button();
+			clearPreferencesToolStripMenuItem = new ToolStripMenuItem();
 			menuStrip1.SuspendLayout();
 			SuspendLayout();
 			// 
 			// menuStrip1
 			// 
 			menuStrip1.ImageScalingSize = new Size(20, 20);
-			menuStrip1.Items.AddRange(new ToolStripItem[] { settingToolStripMenuItem, closeToolStripMenuItem });
+			menuStrip1.Items.AddRange(new ToolStripItem[] { settingToolStripMenuItem, closeToolStripMenuItem, clearPreferencesToolStripMenuItem });
 			menuStrip1.Location = new Point(0, 0);
 			menuStrip1.Name = "menuStrip1";
-			menuStrip1.Size = new Size(1062, 26);
+			menuStrip1.Size = new Size(1062, 28);
 			menuStrip1.TabIndex = 0;
 			menuStrip1.Text = "menuStrip1";
 			// 
 			// settingToolStripMenuItem
 			// 
 			settingToolStripMenuItem.Name = "settingToolStripMenuItem";
-			settingToolStripMenuItem.Size = new Size(86, 22);
+			settingToolStripMenuItem.Size = new Size(86, 24);
 			settingToolStripMenuItem.Text = "Settings";
 			settingToolStripMenuItem.Click += settingToolStripMenuItem_Click;
 			// 
 			// closeToolStripMenuItem
 			// 
 			closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			closeToolStripMenuItem.Size = new Size(62, 22);
+			closeToolStripMenuItem.Size = new Size(62, 24);
 			closeToolStripMenuItem.Text = "Close";
 			closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
 			// 
@@ -144,6 +145,13 @@
 			btnSaveFavoritePlayers.UseVisualStyleBackColor = true;
 			btnSaveFavoritePlayers.Click += btnSaveFavoritePlayers_Click;
 			// 
+			// clearPreferencesToolStripMenuItem
+			// 
+			clearPreferencesToolStripMenuItem.Name = "clearPreferencesToolStripMenuItem";
+			clearPreferencesToolStripMenuItem.Size = new Size(158, 24);
+			clearPreferencesToolStripMenuItem.Text = "Clear Preferences";
+			clearPreferencesToolStripMenuItem.Click += clearPreferencesToolStripMenuItem_Click;
+			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new SizeF(8F, 18F);
@@ -181,5 +189,6 @@
 		private FlowLayoutPanel pnlAllPlayers;
 		private FlowLayoutPanel pnlFavoritePlayers;
 		private Button btnSaveFavoritePlayers;
+		private ToolStripMenuItem clearPreferencesToolStripMenuItem;
 	}
 }

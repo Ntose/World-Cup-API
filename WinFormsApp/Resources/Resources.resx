@@ -187,4 +187,7 @@
   <data name="FavoritePlayersSaved" xml:space="preserve">
     <value>Favorite Players Saved</value>
   </data>
+  <data name="ClearPreferences" xml:space="preserve">
+    <value>Clear Preferences and Restart</value>
+  </data>
 </root>

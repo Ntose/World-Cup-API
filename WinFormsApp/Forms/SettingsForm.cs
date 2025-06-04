@@ -133,6 +133,7 @@ namespace WorldCupStats.WinFormsApp.Forms
 
 		private void SettingsForm_Load(object sender, EventArgs e)
 		{
+
 			label1.Text = Resources.LanguagePicker;
 			label2.Text = Resources.TeamPicker;
 			comboLanguage.Items[0] = Resources.LanguageEnglish;
@@ -142,15 +143,22 @@ namespace WorldCupStats.WinFormsApp.Forms
 			btnOk.Text = Resources.btnApply;
 			btnCancel.Text = Resources.btnCancel;
 			AppSettings appSettings = ConfigManager.LoadSettings();
-			comboLanguage.SelectedItem = appSettings.Language == "en" ? "English" : comboLanguage.Items[1];
-			if (appSettings.Tournament == "men")
-				comboTournament.SelectedItem = comboTournament.Items[0];
-			
+
+			if (appSettings != null)
+			{
+				comboLanguage.SelectedItem = appSettings.Language == "en" ? "English" : comboLanguage.Items[1];
+
+				if (appSettings.Tournament == "men")
+					comboTournament.SelectedItem = comboTournament.Items[0];
+				else
+					comboTournament.SelectedItem = comboTournament.Items[1];
+			}
 			else
-				comboTournament.SelectedItem = comboTournament.Items[1];
-			this.Text = Resources.SettingsTitle;
-			this.AcceptButton = btnOk;
-			this.CancelButton = btnCancel;
+			{
+				comboLanguage.SelectedIndex = 0; // default to English
+				comboTournament.SelectedIndex = 0; // default to Men
+			}
+
 
 		}
 

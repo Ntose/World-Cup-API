@@ -31,8 +31,15 @@ namespace WinFormsApp.Controls
 			picFavorite.Visible = isFavorite;
 
 			// Load images
-			using (var ms = new MemoryStream(Resources.Resources.DefaultPlayer))
+			if (!string.IsNullOrEmpty(player.ImagePath) && File.Exists(player.ImagePath))
+			{
+				picPlayerImage.Image = Image.FromFile(player.ImagePath);
+			}
+			else
+			{
+				using var ms = new MemoryStream(Resources.Resources.DefaultPlayer);
 				picPlayerImage.Image = Image.FromStream(ms);
+			}
 
 			using (var ms = new MemoryStream(Resources.Resources.Star))
 				picCaptain.Image = Image.FromStream(ms);

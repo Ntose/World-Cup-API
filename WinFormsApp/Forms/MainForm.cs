@@ -35,7 +35,7 @@ namespace WinFormsApp
 					pnlAllPlayers.Controls.Add(card);
 				}
 			};
-
+			clearPreferencesToolStripMenuItem.Text = Resources.Resources.ClearPreferences;
 			this.Text = Resources.Resources.MainTitle;
 			lbTeamSelect.Text = Resources.Resources.TeamSelect;
 			settingToolStripMenuItem.Text = Resources.Resources.SettingsTitle;
@@ -77,12 +77,25 @@ namespace WinFormsApp
 					comboTeams.Items.Add(team.ToString());
 				}
 
-				if (File.Exists("favorite_team.txt"))
-				{
-					var saved = File.ReadAllText("favorite_team.txt");
-					comboTeams.SelectedItem = saved;
+				var teamFile = settings.Tournament == "men"
+								? "favorite_team_men.txt"
+								: "favorite_team_women.txt";
 
-					await LoadFavoritePlayers(); // Load players only if favorite is known
+				if (File.Exists(teamFile))
+				{
+					string savedTeam = File.ReadAllText(teamFile).Trim();
+
+					// Try to match an existing item from the ComboBox
+					foreach (var item in comboTeams.Items)
+					{
+						if (item.ToString() == savedTeam)
+						{
+							comboTeams.SelectedItem = item;
+							break;
+						}
+					}
+
+					await LoadFavoritePlayers();
 				}
 			}
 			catch (Exception ex)
@@ -151,6 +164,7 @@ namespace WinFormsApp
 
 		private async Task LoadFavoritePlayers()
 		{
+
 			var settings = ConfigManager.LoadSettings();
 			string fileName = settings.Tournament == "men"
 				? "favorite_team_men.txt"
@@ -164,17 +178,18 @@ namespace WinFormsApp
 				MessageBox.Show("Invalid team format.");
 				return;
 			}
-			
+
 			string fifaCode = favoriteTeam.Substring(codeStart + 1, 3);
 			if (settings == null) return;
 
-			
+
 			string playerFile = $"favorite_players_{settings.Tournament}_{fifaCode}.txt";
 
 
 			var favoriteNames = File.Exists(playerFile)
 				? File.ReadAllLines(playerFile).ToList()
 				: new List<string>();
+
 
 
 			if (!File.Exists(fileName))
@@ -184,7 +199,7 @@ namespace WinFormsApp
 			}
 
 
-			
+
 
 
 			string url = $"https://worldcup-vua.nullbit.hr/{settings.Tournament}/matches/country?fifa_code={fifaCode}";
@@ -206,7 +221,17 @@ namespace WinFormsApp
 				var players = (teamStats?.StartingEleven ?? new List<Player>())
 					.Concat(teamStats?.Substitutes ?? new List<Player>())
 					.ToList();
+				foreach (var player in players)
+				{
+					// Set ImagePath based on player name
+					string imageFile = Path.Combine("images", player.Name.Replace(" ", "_") + ".jpg");
 
+					if (File.Exists(imageFile))
+						player.ImagePath = imageFile;
+
+					var card = new PlayerCard(player, favoriteNames.Contains(player.Name));
+					pnlAllPlayers.Controls.Add(card);
+				}
 				pnlAllPlayers.Controls.Clear();
 				pnlFavoritePlayers.Controls.Clear();
 
@@ -238,6 +263,34 @@ namespace WinFormsApp
 			SaveFavoritePlayers();
 			MessageBox.Show(Resources.Resources.FavoritePlayersSaved);
 			Application.Restart();
+		}
+
+		private void clearPreferencesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			string[] filesToDelete =
+	{
+		"config.txt",
+		"favorite_team_men.txt",
+		"favorite_team_women.txt"
+	};
+
+			foreach (string file in filesToDelete)
+			{
+				if (File.Exists(file))
+				{
+					File.Delete(file);
+				}
+			}
+
+			// Delete all player favorites for men and women (wildcard matching)
+			foreach (var file in Directory.GetFiles(Directory.GetCurrentDirectory(), "favorite_players_*_*.txt"))
+			{
+				File.Delete(file);
+			}
+
+			MessageBox.Show("All config and team data deleted. App will now restart.");
+			Application.Restart();
+			Environment.Exit(0);
 		}
 	}
 }

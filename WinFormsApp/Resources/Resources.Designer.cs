@@ -88,6 +88,15 @@ namespace WinFormsApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear Preferences and Restart.
+        /// </summary>
+        internal static string ClearPreferences {
+            get {
+                return ResourceManager.GetString("ClearPreferences", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
         internal static string Close {
