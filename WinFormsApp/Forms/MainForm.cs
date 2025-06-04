@@ -41,6 +41,7 @@ namespace WinFormsApp
 			settingToolStripMenuItem.Text = Resources.Resources.SettingsTitle;
 			closeToolStripMenuItem.Text = Resources.Resources.Close;
 			btnConfirm.Text = Resources.Resources.btnApply;
+			btnSaveFavoritePlayers.Text = Resources.Resources.Save;
 		}
 
 		private void settingToolStripMenuItem_Click(object sender, EventArgs e)
@@ -112,34 +113,49 @@ namespace WinFormsApp
 
 				MessageBox.Show($"{Resources.Resources.FavoriteTeam} {selectedTeam}");
 				await LoadFavoritePlayers(); // reload players based on saved favorite
-
-
-				MessageBox.Show($"{Resources.Resources.FavoriteTeam} {selectedTeam}");
-
-				await LoadFavoritePlayers(); //load players after setting favorite
 			}
 			else
 			{
 				MessageBox.Show(Resources.Resources.PickFavoriteTeam);
 			}
 		}
-		private async Task LoadFavoritePlayers()
+		private void SaveFavoritePlayers()
 		{
 			var settings = ConfigManager.LoadSettings();
 			if (settings == null) return;
 
+			string fileName = $"favorite_players_{settings.Tournament}_{GetCurrentFifaCode()}.txt";
+
+
+			var favoriteNames = pnlFavoritePlayers.Controls
+				.OfType<PlayerCard>()
+				.Select(card => card.PlayerData.Name)
+				.ToList();
+
+			File.WriteAllLines(fileName, favoriteNames);
+		}
+
+		private string GetCurrentFifaCode()
+		{
+			if (!File.Exists("favorite_team_" + ConfigManager.LoadSettings().Tournament + ".txt"))
+				return "";
+
+			string teamLine = File.ReadAllText("favorite_team_" + ConfigManager.LoadSettings().Tournament + ".txt");
+			int start = teamLine.IndexOf('(');
+			int end = teamLine.IndexOf(')');
+			if (start == -1 || end == -1) return "";
+
+			return teamLine.Substring(start + 1, 3); // e.g. FRA
+		}
+
+
+		private async Task LoadFavoritePlayers()
+		{
+			var settings = ConfigManager.LoadSettings();
 			string fileName = settings.Tournament == "men"
 				? "favorite_team_men.txt"
 				: "favorite_team_women.txt";
-
-			if (!File.Exists(fileName))
-			{
-				MessageBox.Show(Resources.Resources.FavoriteTeamNotFound);
-				return;
-			}
-
 			string favoriteTeam = File.ReadAllText(fileName).Trim();
-
 			// Extract FIFA code
 			int codeStart = favoriteTeam.IndexOf('(');
 			int codeEnd = favoriteTeam.IndexOf(')');
@@ -148,8 +164,28 @@ namespace WinFormsApp
 				MessageBox.Show("Invalid team format.");
 				return;
 			}
-
+			
 			string fifaCode = favoriteTeam.Substring(codeStart + 1, 3);
+			if (settings == null) return;
+
+			
+			string playerFile = $"favorite_players_{settings.Tournament}_{fifaCode}.txt";
+
+
+			var favoriteNames = File.Exists(playerFile)
+				? File.ReadAllLines(playerFile).ToList()
+				: new List<string>();
+
+
+			if (!File.Exists(fileName))
+			{
+				MessageBox.Show(Resources.Resources.FavoriteTeamNotFound);
+				return;
+			}
+
+
+			
+
 
 			string url = $"https://worldcup-vua.nullbit.hr/{settings.Tournament}/matches/country?fifa_code={fifaCode}";
 
@@ -166,13 +202,10 @@ namespace WinFormsApp
 					return;
 				}
 
-				var players = (firstMatch.HomeTeamStartingEleven ?? new List<Player>())
-					.Concat(firstMatch.HomeTeamSubstitutes ?? new List<Player>())
+				var teamStats = firstMatch.HomeTeamStatistics;
+				var players = (teamStats?.StartingEleven ?? new List<Player>())
+					.Concat(teamStats?.Substitutes ?? new List<Player>())
 					.ToList();
-
-				var favoriteNames = File.Exists("favorite_players.txt")
-					? File.ReadAllLines("favorite_players.txt").ToList()
-					: new List<string>();
 
 				pnlAllPlayers.Controls.Clear();
 				pnlFavoritePlayers.Controls.Clear();
@@ -194,9 +227,17 @@ namespace WinFormsApp
 
 
 
+
 		private void comboTeams_SelectedIndexChanged(object sender, EventArgs e)
 		{
 
+		}
+
+		private void btnSaveFavoritePlayers_Click(object sender, EventArgs e)
+		{
+			SaveFavoritePlayers();
+			MessageBox.Show(Resources.Resources.FavoritePlayersSaved);
+			Application.Restart();
 		}
 	}
 }

@@ -181,4 +181,10 @@
   <data name="FavoriteTeamNotFound" xml:space="preserve">
     <value>Favorite team not found</value>
   </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="FavoritePlayersSaved" xml:space="preserve">
+    <value>Favorite Players Saved</value>
+  </data>
 </root>

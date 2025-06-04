@@ -34,10 +34,11 @@
 			lbTeamSelect = new Label();
 			comboTeams = new ComboBox();
 			btnConfirm = new Button();
-			pnlFavoritePlayers = new Panel();
-			pnlAllPlayers = new Panel();
 			lbAllPlayers = new Label();
 			lbFavoritePlayers = new Label();
+			pnlAllPlayers = new FlowLayoutPanel();
+			pnlFavoritePlayers = new FlowLayoutPanel();
+			btnSaveFavoritePlayers = new Button();
 			menuStrip1.SuspendLayout();
 			SuspendLayout();
 			// 
@@ -47,7 +48,7 @@
 			menuStrip1.Items.AddRange(new ToolStripItem[] { settingToolStripMenuItem, closeToolStripMenuItem });
 			menuStrip1.Location = new Point(0, 0);
 			menuStrip1.Name = "menuStrip1";
-			menuStrip1.Size = new Size(800, 26);
+			menuStrip1.Size = new Size(1062, 26);
 			menuStrip1.TabIndex = 0;
 			menuStrip1.Text = "menuStrip1";
 			// 
@@ -93,22 +94,6 @@
 			btnConfirm.UseVisualStyleBackColor = true;
 			btnConfirm.Click += btnConfirm_Click;
 			// 
-			// pnlFavoritePlayers
-			// 
-			pnlFavoritePlayers.AllowDrop = true;
-			pnlFavoritePlayers.Location = new Point(420, 164);
-			pnlFavoritePlayers.Name = "pnlFavoritePlayers";
-			pnlFavoritePlayers.Size = new Size(368, 265);
-			pnlFavoritePlayers.TabIndex = 4;
-			// 
-			// pnlAllPlayers
-			// 
-			pnlAllPlayers.AllowDrop = true;
-			pnlAllPlayers.Location = new Point(12, 164);
-			pnlAllPlayers.Name = "pnlAllPlayers";
-			pnlAllPlayers.Size = new Size(366, 265);
-			pnlAllPlayers.TabIndex = 5;
-			// 
 			// lbAllPlayers
 			// 
 			lbAllPlayers.AutoSize = true;
@@ -121,21 +106,54 @@
 			// lbFavoritePlayers
 			// 
 			lbFavoritePlayers.AutoSize = true;
-			lbFavoritePlayers.Location = new Point(420, 120);
+			lbFavoritePlayers.Location = new Point(706, 120);
 			lbFavoritePlayers.Name = "lbFavoritePlayers";
 			lbFavoritePlayers.Size = new Size(208, 18);
 			lbFavoritePlayers.TabIndex = 7;
 			lbFavoritePlayers.Text = "Resources.FavoritePlayers";
 			// 
+			// pnlAllPlayers
+			// 
+			pnlAllPlayers.AllowDrop = true;
+			pnlAllPlayers.AutoScroll = true;
+			pnlAllPlayers.BackColor = SystemColors.ButtonFace;
+			pnlAllPlayers.FlowDirection = FlowDirection.TopDown;
+			pnlAllPlayers.Location = new Point(12, 164);
+			pnlAllPlayers.Name = "pnlAllPlayers";
+			pnlAllPlayers.Size = new Size(506, 506);
+			pnlAllPlayers.TabIndex = 0;
+			// 
+			// pnlFavoritePlayers
+			// 
+			pnlFavoritePlayers.AllowDrop = true;
+			pnlFavoritePlayers.AutoScroll = true;
+			pnlFavoritePlayers.BackColor = SystemColors.ButtonFace;
+			pnlFavoritePlayers.FlowDirection = FlowDirection.TopDown;
+			pnlFavoritePlayers.Location = new Point(544, 164);
+			pnlFavoritePlayers.Name = "pnlFavoritePlayers";
+			pnlFavoritePlayers.Size = new Size(506, 506);
+			pnlFavoritePlayers.TabIndex = 8;
+			// 
+			// btnSaveFavoritePlayers
+			// 
+			btnSaveFavoritePlayers.Location = new Point(544, 115);
+			btnSaveFavoritePlayers.Name = "btnSaveFavoritePlayers";
+			btnSaveFavoritePlayers.Size = new Size(94, 29);
+			btnSaveFavoritePlayers.TabIndex = 9;
+			btnSaveFavoritePlayers.Text = "Resources.Save";
+			btnSaveFavoritePlayers.UseVisualStyleBackColor = true;
+			btnSaveFavoritePlayers.Click += btnSaveFavoritePlayers_Click;
+			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new SizeF(8F, 18F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(800, 450);
+			ClientSize = new Size(1062, 682);
+			Controls.Add(btnSaveFavoritePlayers);
+			Controls.Add(pnlFavoritePlayers);
+			Controls.Add(pnlAllPlayers);
 			Controls.Add(lbFavoritePlayers);
 			Controls.Add(lbAllPlayers);
-			Controls.Add(pnlAllPlayers);
-			Controls.Add(pnlFavoritePlayers);
 			Controls.Add(btnConfirm);
 			Controls.Add(comboTeams);
 			Controls.Add(lbTeamSelect);
@@ -158,9 +176,10 @@
 		private Label lbTeamSelect;
 		private ComboBox comboTeams;
 		private Button btnConfirm;
-		private Panel pnlFavoritePlayers;
-		private Panel pnlAllPlayers;
 		private Label lbAllPlayers;
 		private Label lbFavoritePlayers;
+		private FlowLayoutPanel pnlAllPlayers;
+		private FlowLayoutPanel pnlFavoritePlayers;
+		private Button btnSaveFavoritePlayers;
 	}
 }

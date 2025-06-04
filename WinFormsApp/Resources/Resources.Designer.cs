@@ -116,6 +116,15 @@ namespace WinFormsApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Favorite Players Saved.
+        /// </summary>
+        internal static string FavoritePlayersSaved {
+            get {
+                return ResourceManager.GetString("FavoritePlayersSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Favorite team selected:.
         /// </summary>
         internal static string FavoriteTeam {
@@ -194,6 +203,15 @@ namespace WinFormsApp.Resources {
         internal static string PickFavoriteTeam {
             get {
                 return ResourceManager.GetString("PickFavoriteTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        internal static string Save {
+            get {
+                return ResourceManager.GetString("Save", resourceCulture);
             }
         }
         

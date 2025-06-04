@@ -56,13 +56,13 @@ namespace DataLayer
 			// Determine if the selected team was home or away in this match
 			if (firstMatch.HomeTeam?.FifaCode == fifaCode)
 			{
-				allPlayers.AddRange(firstMatch.HomeTeamStartingEleven ?? new List<Player>());
-				allPlayers.AddRange(firstMatch.HomeTeamSubstitutes ?? new List<Player>());
+				allPlayers.AddRange(firstMatch.HomeTeamStatistics.StartingEleven ?? new List<Player>());
+				allPlayers.AddRange(firstMatch.HomeTeamStatistics.Substitutes ?? new List<Player>());
 			}
 			else if (firstMatch.AwayTeam?.FifaCode == fifaCode)
 			{
-				allPlayers.AddRange(firstMatch.AwayTeamStartingEleven ?? new List<Player>());
-				allPlayers.AddRange(firstMatch.AwayTeamSubstitutes ?? new List<Player>());
+				allPlayers.AddRange(firstMatch.AwayTeamStatistics.StartingEleven ?? new List<Player>());
+				allPlayers.AddRange(firstMatch.AwayTeamStatistics.Substitutes ?? new List<Player>());
 			}
 
 			return allPlayers.Distinct().ToList(); // Remove duplicates if any
