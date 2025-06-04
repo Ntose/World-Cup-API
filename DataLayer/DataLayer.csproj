@@ -82,6 +82,7 @@
     <Compile Include="APIService.cs" />
     <Compile Include="ConfigurationManager.cs" />
     <Compile Include="DataManager.cs" />
+    <Compile Include="Helpers\ConfigManager.cs" />
     <Compile Include="JsonDataService.cs" />
     <Compile Include="Models\Match.cs" />
     <Compile Include="Models\MatchEvent.cs" />
