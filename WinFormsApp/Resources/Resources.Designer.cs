@@ -125,6 +125,15 @@ namespace WinFormsApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Favorite team not found.
+        /// </summary>
+        internal static string FavoriteTeamNotFound {
+            get {
+                return ResourceManager.GetString("FavoriteTeamNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] Heart {

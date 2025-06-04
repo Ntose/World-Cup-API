@@ -178,4 +178,7 @@
   <data name="FavoritePlayers" xml:space="preserve">
     <value>Najdraži Igrači</value>
   </data>
+  <data name="FavoriteTeamNotFound" xml:space="preserve">
+    <value>Najdraži tim nije nađen</value>
+  </data>
 </root>

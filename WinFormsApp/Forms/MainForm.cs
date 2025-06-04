@@ -105,7 +105,14 @@ namespace WinFormsApp
 			if (comboTeams.SelectedItem != null)
 			{
 				var selectedTeam = comboTeams.SelectedItem.ToString();
-				File.WriteAllText("favorite_team.txt", selectedTeam);
+				var settings = ConfigManager.LoadSettings();
+				var tournament = settings.Tournament; // "men" or "women"
+				string fileName = tournament == "men" ? "favorite_team_men.txt" : "favorite_team_women.txt";
+				File.WriteAllText(fileName, selectedTeam);
+
+				MessageBox.Show($"{Resources.Resources.FavoriteTeam} {selectedTeam}");
+				await LoadFavoritePlayers(); // reload players based on saved favorite
+
 
 				MessageBox.Show($"{Resources.Resources.FavoriteTeam} {selectedTeam}");
 
@@ -116,53 +123,76 @@ namespace WinFormsApp
 				MessageBox.Show(Resources.Resources.PickFavoriteTeam);
 			}
 		}
-
 		private async Task LoadFavoritePlayers()
 		{
 			var settings = ConfigManager.LoadSettings();
-			string favoriteTeam = File.Exists("favorite_team.txt")
-				? File.ReadAllText("favorite_team.txt").Trim()
-				: null;
+			if (settings == null) return;
 
-			if (string.IsNullOrEmpty(favoriteTeam))
+			string fileName = settings.Tournament == "men"
+				? "favorite_team_men.txt"
+				: "favorite_team_women.txt";
+
+			if (!File.Exists(fileName))
 			{
-				MessageBox.Show("Favorite team not found.");
+				MessageBox.Show(Resources.Resources.FavoriteTeamNotFound);
 				return;
 			}
 
-			string fifaCode = favoriteTeam.Substring(favoriteTeam.IndexOf('(') + 1, 3);
+			string favoriteTeam = File.ReadAllText(fileName).Trim();
+
+			// Extract FIFA code
+			int codeStart = favoriteTeam.IndexOf('(');
+			int codeEnd = favoriteTeam.IndexOf(')');
+			if (codeStart == -1 || codeEnd == -1 || codeEnd - codeStart != 4)
+			{
+				MessageBox.Show("Invalid team format.");
+				return;
+			}
+
+			string fifaCode = favoriteTeam.Substring(codeStart + 1, 3);
+
 			string url = $"https://worldcup-vua.nullbit.hr/{settings.Tournament}/matches/country?fifa_code={fifaCode}";
 
-			using var client = new HttpClient();
-			string json = await client.GetStringAsync(url);
-			var matches = JsonConvert.DeserializeObject<List<Match>>(json);
-			var firstMatch = matches.FirstOrDefault();
-
-			if (firstMatch == null)
+			try
 			{
-				MessageBox.Show("No matches found.");
-				return;
+				using var client = new HttpClient();
+				string json = await client.GetStringAsync(url);
+				var matches = JsonConvert.DeserializeObject<List<Match>>(json);
+				var firstMatch = matches.FirstOrDefault();
+
+				if (firstMatch == null)
+				{
+					MessageBox.Show("No matches found.");
+					return;
+				}
+
+				var players = (firstMatch.HomeTeamStartingEleven ?? new List<Player>())
+					.Concat(firstMatch.HomeTeamSubstitutes ?? new List<Player>())
+					.ToList();
+
+				var favoriteNames = File.Exists("favorite_players.txt")
+					? File.ReadAllLines("favorite_players.txt").ToList()
+					: new List<string>();
+
+				pnlAllPlayers.Controls.Clear();
+				pnlFavoritePlayers.Controls.Clear();
+
+				foreach (var player in players)
+				{
+					var card = new PlayerCard(player, favoriteNames.Contains(player.Name));
+					pnlAllPlayers.Controls.Add(card);
+				}
+
+				// Pre-select team in ComboBox
+				comboTeams.SelectedItem = favoriteTeam;
 			}
-
-			var startingEleven = firstMatch.HomeTeamStartingEleven ?? new List<Player>();
-			var substitutes = firstMatch.HomeTeamSubstitutes ?? new List<Player>();
-
-			var players = startingEleven.Concat(substitutes).ToList();
-
-
-			var favoriteNames = File.Exists("favorite_players.txt")
-				? File.ReadAllLines("favorite_players.txt").ToList()
-				: new List<string>();
-
-			pnlAllPlayers.Controls.Clear(); // Clear previous
-			pnlFavoritePlayers.Controls.Clear();
-
-			foreach (var player in players)
+			catch (Exception ex)
 			{
-				var card = new PlayerCard(player, favoriteNames.Contains(player.Name));
-				pnlAllPlayers.Controls.Add(card);
+				MessageBox.Show($"Error loading players: {ex.Message}");
 			}
 		}
+
+
 
 		private void comboTeams_SelectedIndexChanged(object sender, EventArgs e)
 		{
