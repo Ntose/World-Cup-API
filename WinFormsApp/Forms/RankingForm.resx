@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -117,80 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MainTitle" xml:space="preserve">
-    <value>World Cup Statistics</value>
-  </data>
-  <data name="LanguagePicker" xml:space="preserve">
-    <value>Language:</value>
-  </data>
-  <data name="TeamPicker" xml:space="preserve">
-    <value>Tournament:</value>
-  </data>
-  <data name="LanguageEnglish" xml:space="preserve">
-    <value>English</value>
-  </data>
-  <data name="LanguageCroatian" xml:space="preserve">
-    <value>Croatian</value>
-  </data>
-  <data name="TeamMen" xml:space="preserve">
-    <value>Men</value>
-  </data>
-  <data name="TeamWomen" xml:space="preserve">
-    <value>Women</value>
-  </data>
-  <data name="btnApply" xml:space="preserve">
-    <value>Apply</value>
-  </data>
-  <data name="btnCancel" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="modalSettingsError" xml:space="preserve">
-    <value>Please select Language and Tournament</value>
-  </data>
-  <data name="SettingsTitle" xml:space="preserve">
-    <value>Settings</value>
-  </data>
-  <data name="Close" xml:space="preserve">
-    <value>Close</value>
-  </data>
-  <data name="TeamSelect" xml:space="preserve">
-    <value>Select your favorite team:</value>
-  </data>
-  <data name="FavoriteTeam" xml:space="preserve">
-    <value>Favorite team selected:</value>
-  </data>
-  <data name="PickFavoriteTeam" xml:space="preserve">
-    <value>Select a favorite team</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="DefaultPlayer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>DefaultPlayer.jpg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Star" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>star.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Heart" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>heart.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="AllPlayers" xml:space="preserve">
-    <value>All Players</value>
-  </data>
-  <data name="FavoritePlayers" xml:space="preserve">
-    <value>Favorite Players</value>
-  </data>
-  <data name="FavoriteTeamNotFound" xml:space="preserve">
-    <value>Favorite team not found</value>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Save</value>
-  </data>
-  <data name="FavoritePlayersSaved" xml:space="preserve">
-    <value>Favorite Players Saved</value>
-  </data>
-  <data name="ClearPreferences" xml:space="preserve">
-    <value>Clear Preferences and Restart</value>
-  </data>
-  <data name="Ranking" xml:space="preserve">
-    <value>Ranking</value>
-  </data>
 </root>

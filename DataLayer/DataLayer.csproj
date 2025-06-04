@@ -84,6 +84,7 @@
     <Compile Include="DataManager.cs" />
     <Compile Include="JsonDataService.cs" />
     <Compile Include="Models\Match.cs" />
+    <Compile Include="Models\MatchEvent.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Team.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -190,4 +190,7 @@
   <data name="ClearPreferences" xml:space="preserve">
     <value>Izbriši Postavke i Ponovno Učitaj</value>
   </data>
+  <data name="Ranking" xml:space="preserve">
+    <value>Rangiranje</value>
+  </data>
 </root>

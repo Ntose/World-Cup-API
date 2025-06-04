@@ -3,6 +3,7 @@ using DataLayer.Models;
 using Newtonsoft.Json;
 using System.Windows.Forms.Design;
 using WinFormsApp.Controls;
+using WinFormsApp.Forms;
 using WorldCupStats.WinFormsApp.Forms;
 using WorldCupStats.WinFormsApp.Helpers;
 
@@ -41,6 +42,7 @@ namespace WinFormsApp
 			settingToolStripMenuItem.Text = Resources.Resources.SettingsTitle;
 			closeToolStripMenuItem.Text = Resources.Resources.Close;
 			btnConfirm.Text = Resources.Resources.btnApply;
+			rankingToolStripMenuItem.Text = Resources.Resources.Ranking;
 			btnSaveFavoritePlayers.Text = Resources.Resources.Save;
 		}
 
@@ -291,6 +293,12 @@ namespace WinFormsApp
 			MessageBox.Show("All config and team data deleted. App will now restart.");
 			Application.Restart();
 			Environment.Exit(0);
+		}
+
+		private void rankingToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			var form = new RankingForm();
+			form.ShowDialog();
 		}
 	}
 }

@@ -30,6 +30,8 @@ namespace DataLayer.Models
 
 		[JsonProperty("goal_differential")]
 		public int GoalDifferential { get; set; }
+		[JsonIgnore]
+		public int Points => Wins * 3 + Draws;
 
 		public override string ToString()
 		{

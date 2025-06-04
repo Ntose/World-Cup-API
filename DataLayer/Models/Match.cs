@@ -23,7 +23,8 @@ namespace DataLayer.Models
 
 		public string Winner { get; set; }
 
-
+		[JsonProperty("home_team_events")]
+		public List<MatchEvent> HomeTeamEvents { get; set; }
 		[JsonProperty("home_team_statistics")]
 		public TeamStatistics HomeTeamStatistics { get; set; }
 

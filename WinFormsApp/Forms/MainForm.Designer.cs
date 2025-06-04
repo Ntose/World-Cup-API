@@ -31,6 +31,8 @@
 			menuStrip1 = new MenuStrip();
 			settingToolStripMenuItem = new ToolStripMenuItem();
 			closeToolStripMenuItem = new ToolStripMenuItem();
+			clearPreferencesToolStripMenuItem = new ToolStripMenuItem();
+			rankingToolStripMenuItem = new ToolStripMenuItem();
 			lbTeamSelect = new Label();
 			comboTeams = new ComboBox();
 			btnConfirm = new Button();
@@ -39,33 +41,46 @@
 			pnlAllPlayers = new FlowLayoutPanel();
 			pnlFavoritePlayers = new FlowLayoutPanel();
 			btnSaveFavoritePlayers = new Button();
-			clearPreferencesToolStripMenuItem = new ToolStripMenuItem();
 			menuStrip1.SuspendLayout();
 			SuspendLayout();
 			// 
 			// menuStrip1
 			// 
 			menuStrip1.ImageScalingSize = new Size(20, 20);
-			menuStrip1.Items.AddRange(new ToolStripItem[] { settingToolStripMenuItem, closeToolStripMenuItem, clearPreferencesToolStripMenuItem });
+			menuStrip1.Items.AddRange(new ToolStripItem[] { settingToolStripMenuItem, rankingToolStripMenuItem, clearPreferencesToolStripMenuItem, closeToolStripMenuItem });
 			menuStrip1.Location = new Point(0, 0);
 			menuStrip1.Name = "menuStrip1";
-			menuStrip1.Size = new Size(1062, 28);
+			menuStrip1.Size = new Size(1062, 26);
 			menuStrip1.TabIndex = 0;
 			menuStrip1.Text = "menuStrip1";
 			// 
 			// settingToolStripMenuItem
 			// 
 			settingToolStripMenuItem.Name = "settingToolStripMenuItem";
-			settingToolStripMenuItem.Size = new Size(86, 24);
+			settingToolStripMenuItem.Size = new Size(86, 22);
 			settingToolStripMenuItem.Text = "Settings";
 			settingToolStripMenuItem.Click += settingToolStripMenuItem_Click;
 			// 
 			// closeToolStripMenuItem
 			// 
 			closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			closeToolStripMenuItem.Size = new Size(62, 24);
+			closeToolStripMenuItem.Size = new Size(62, 22);
 			closeToolStripMenuItem.Text = "Close";
 			closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
+			// 
+			// clearPreferencesToolStripMenuItem
+			// 
+			clearPreferencesToolStripMenuItem.Name = "clearPreferencesToolStripMenuItem";
+			clearPreferencesToolStripMenuItem.Size = new Size(158, 22);
+			clearPreferencesToolStripMenuItem.Text = "Clear Preferences";
+			clearPreferencesToolStripMenuItem.Click += clearPreferencesToolStripMenuItem_Click;
+			// 
+			// rankingToolStripMenuItem
+			// 
+			rankingToolStripMenuItem.Name = "rankingToolStripMenuItem";
+			rankingToolStripMenuItem.Size = new Size(78, 22);
+			rankingToolStripMenuItem.Text = "Ranking";
+			rankingToolStripMenuItem.Click += rankingToolStripMenuItem_Click;
 			// 
 			// lbTeamSelect
 			// 
@@ -107,7 +122,7 @@
 			// lbFavoritePlayers
 			// 
 			lbFavoritePlayers.AutoSize = true;
-			lbFavoritePlayers.Location = new Point(706, 120);
+			lbFavoritePlayers.Location = new Point(644, 120);
 			lbFavoritePlayers.Name = "lbFavoritePlayers";
 			lbFavoritePlayers.Size = new Size(208, 18);
 			lbFavoritePlayers.TabIndex = 7;
@@ -145,17 +160,11 @@
 			btnSaveFavoritePlayers.UseVisualStyleBackColor = true;
 			btnSaveFavoritePlayers.Click += btnSaveFavoritePlayers_Click;
 			// 
-			// clearPreferencesToolStripMenuItem
-			// 
-			clearPreferencesToolStripMenuItem.Name = "clearPreferencesToolStripMenuItem";
-			clearPreferencesToolStripMenuItem.Size = new Size(158, 24);
-			clearPreferencesToolStripMenuItem.Text = "Clear Preferences";
-			clearPreferencesToolStripMenuItem.Click += clearPreferencesToolStripMenuItem_Click;
-			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new SizeF(8F, 18F);
 			AutoScaleMode = AutoScaleMode.Font;
+			BackColor = SystemColors.ButtonHighlight;
 			ClientSize = new Size(1062, 682);
 			Controls.Add(btnSaveFavoritePlayers);
 			Controls.Add(pnlFavoritePlayers);
@@ -190,5 +199,6 @@
 		private FlowLayoutPanel pnlFavoritePlayers;
 		private Button btnSaveFavoritePlayers;
 		private ToolStripMenuItem clearPreferencesToolStripMenuItem;
+		private ToolStripMenuItem rankingToolStripMenuItem;
 	}
 }
