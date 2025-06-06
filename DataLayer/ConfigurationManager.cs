@@ -162,6 +162,22 @@ namespace DataLayer
 				SaveConfiguration(); // Auto-save when favorites change
 			}
 		}
+		public static string FavoriteTeamCode
+		{
+			get
+			{
+				string filename = SelectedChampionship.ToLower() == "women"
+					? "favorite_team_women.txt"
+					: "favorite_team_men.txt";
+
+				if (File.Exists(filename))
+				{
+					return File.ReadAllText(filename).Trim();
+				}
+
+				return null;
+			}
+		}
 
 		public static void RemoveFavoritePlayer(string playerName)
 		{

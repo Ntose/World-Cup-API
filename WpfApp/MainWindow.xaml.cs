@@ -1,244 +1,425 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
-using System.Text; // Added for potential future use, e.g., logging
-using System.Threading.Tasks; // Added for Task if any new async operations are introduced
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls; // Required for SelectionChangedEventArgs
-using DataLayer.Models;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
 using DataLayer;
+using DataLayer.Models;
 
 namespace WpfApp
 {
-	public partial class MainWindow : Window
+	public partial class MainWindow : Window, INotifyPropertyChanged
 	{
-		private readonly DataManager _dataManager = new DataManager();
-		private List<Team> _teams;
-		private List<Match> _matches;
-		private string _selectedGender;
-		private string _selectedLanguage; // Assuming language might be part of settings
+		private DataManager dataManager;
+		private Match currentMatch;
+		private bool isInitializing = false;
 
-		// Path for storing the favorite team
-		private readonly string FavoriteTeamFilePath = Path.Combine(
-			Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-			"WorldCupApp", // Suggest using a dedicated app folder
-			"favorite_team.txt");
+		private List<Team> teams;
+		public List<Team> Teams
+		{
+			get => teams;
+			set
+			{
+				teams = value;
+				OnPropertyChanged(nameof(Teams));
+			}
+		}
 
-		// Path for settings
-		private readonly string SettingsFilePath = Path.Combine(
-			Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-			"WorldCupApp",
-			"settings.txt");
+		private Team selectedTeam;
+		public Team SelectedTeam
+		{
+			get => selectedTeam;
+			set
+			{
+				if (selectedTeam != value)
+				{
+					selectedTeam = value;
+					OnPropertyChanged(nameof(SelectedTeam));
+					OnPropertyChanged(nameof(HasSelectedTeam));
 
+					// Only update match result if not during initialization
+					if (!isInitializing)
+					{
+						_ = UpdateMatchResult();
+					}
+				}
+			}
+		}
+
+		private Team selectedOpponent;
+		public Team SelectedOpponent
+		{
+			get => selectedOpponent;
+			set
+			{
+				if (selectedOpponent != value)
+				{
+					selectedOpponent = value;
+					OnPropertyChanged(nameof(SelectedOpponent));
+					OnPropertyChanged(nameof(HasSelectedOpponent));
+
+					// Only update match result if not during initialization
+					if (!isInitializing)
+					{
+						_ = UpdateMatchResult();
+					}
+				}
+			}
+		}
+
+		private List<Team> opponents;
+		public List<Team> Opponents
+		{
+			get => opponents;
+			set
+			{
+				opponents = value;
+				OnPropertyChanged(nameof(Opponents));
+			}
+		}
+
+		private bool isLoading;
+		public bool IsLoading
+		{
+			get => isLoading;
+			set
+			{
+				isLoading = value;
+				OnPropertyChanged(nameof(IsLoading));
+			}
+		}
+
+		// Add missing properties for binding
+		public bool HasSelectedTeam => SelectedTeam != null;
+		public bool HasSelectedOpponent => SelectedOpponent != null;
+
+		// Add missing text properties for binding
+		public string SettingsMenuText => "Settings";
+		public string ChangeSettingsText => "Change Settings";
+		public string ExitText => "Exit";
+		public string SelectTeamText => "Select Team";
+		public string SelectOpponentText => "Select Opponent";
+		public string SelectedTeamInfoText => "Team Info";
+		public string OpponentTeamInfoText => "Opponent Info";
+		public string StatusText => "Ready";
+		public string ChampionshipText => ConfigurationManager.SelectedChampionship ?? "World Cup";
+		public string LoadingText => "Loading...";
 
 		public MainWindow()
 		{
 			InitializeComponent();
-			EnsureAppSettingsDirectory(); // Ensure directory for settings files exists
-			LoadInitialDataAsync();
-		}
+			DataContext = this;
 
-		private void EnsureAppSettingsDirectory()
-		{
-			// Ensure the directory for settings and favorite team files exists
-			// This prevents errors if the directory isn't manually created
-			var appDataDir = Path.GetDirectoryName(SettingsFilePath);
-			if (appDataDir != null && !Directory.Exists(appDataDir))
-			{
-				Directory.CreateDirectory(appDataDir);
-			}
-		}
-
-		private async void LoadInitialDataAsync()
-		{
-			try
-			{
-				// Robustly read settings
-				if (!File.Exists(SettingsFilePath))
-				{
-					// Handle missing settings file, perhaps by prompting user or using defaults
-					// For now, we can create a default one or show an error.
-					// Example: File.WriteAllText(SettingsFilePath, "women;en"); // Default to women, English
-					MessageBox.Show($"Settings file not found at {SettingsFilePath}. Please create it (e.g., 'women;en') or set up initial configuration.", "Settings Missing", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return; // Exit if settings are crucial and missing
-				}
-
-				var settingsContent = File.ReadAllText(SettingsFilePath);
-				var settings = settingsContent.Split(';');
-				if (settings.Length < 1 || string.IsNullOrWhiteSpace(settings[0]))
-				{
-					MessageBox.Show("Gender not specified or invalid in settings.txt.", "Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
-					return;
-				}
-				_selectedGender = settings[0].Trim().ToLower();
-				// _selectedLanguage = settings.Length > 1 ? settings[1].Trim().ToLower() : "en"; // Example: Handle language
-
-				// Performance Note:
-				// Your DataManager.GetTeamsAsync internally calls GetMatchesAsync.
-				// Then you call _dataManager.GetMatchesAsync again.
-				// This means match data is fetched twice from the API during startup.
-				// Consider refactoring DataManager or how you call it to fetch matches only once.
-				// For example:
-				// _matches = await _dataManager.GetMatchesAsync(_selectedGender);
-				// _teams = _dataManager.ExtractTeamsFromMatches(_matches); // (You'd need to add ExtractTeamsFromMatches to DataManager)
-
-				_teams = await _dataManager.GetTeamsAsync(_selectedGender);
-				_matches = await _dataManager.GetMatchesAsync(_selectedGender);
-
-				if (_teams == null || !_teams.Any())
-				{
-					MessageBox.Show($"No teams found for the selected gender: '{_selectedGender}'. Check API or settings.", "Data Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					FavoriteTeamComboBox.ItemsSource = null; // Clear combobox
-					return;
-				}
-				if (_matches == null) // Matches could legitimately be empty if no matches played, but null is an issue
-				{
-					MessageBox.Show($"Match data could not be loaded for the selected gender: '{_selectedGender}'.", "Data Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					_matches = new List<Match>(); // Initialize to empty list to prevent null reference errors later
-				}
-
-
-				var sortedTeams = _teams.OrderBy(t => t.Country).ToList();
-
-				FavoriteTeamComboBox.ItemsSource = sortedTeams;
-				FavoriteTeamComboBox.DisplayMemberPath = "Country"; // Assumes Team class has a 'Country' property
-
-				// Pre-select favorite team by FIFA code
-				if (File.Exists(FavoriteTeamFilePath))
-				{
-					var favoriteCode = File.ReadAllText(FavoriteTeamFilePath).Trim().ToUpperInvariant();
-					if (!string.IsNullOrEmpty(favoriteCode))
-					{
-						var favoriteTeam = sortedTeams.FirstOrDefault(t => t.FifaCode.ToUpperInvariant() == favoriteCode);
-						if (favoriteTeam != null)
-						{
-							FavoriteTeamComboBox.SelectedItem = favoriteTeam;
-						}
-						else
-						{
-							// Favorite team code from file not found in the current list of teams
-							// Maybe clear favorite_team.txt or notify user?
-							// For now, it will just not pre-select.
-						}
-					}
-				}
-			}
-			catch (IOException ex)
-			{
-				MessageBox.Show($"File access error during initial load: {ex.Message}\nMake sure settings.txt and favorite_team.txt are accessible.", "File Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			}
-			catch (System.Net.Http.HttpRequestException ex)
-			{
-				MessageBox.Show($"Network error fetching data: {ex.Message}. Please check your internet connection and the API endpoint.", "Network Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			}
-			catch (Exception ex) // Catch-all for other unexpected errors
-			{
-				MessageBox.Show($"An unexpected error occurred during initial data load: {ex.Message}", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error);
-				// Log ex.ToString() for detailed debugging
-			}
-		}
-
-		// Changed from async void to void as no await is used.
-		private void FavoriteTeamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			var team1 = FavoriteTeamComboBox.SelectedItem as Team;
-			if (team1 == null)
-			{
-				MatchResultTextBlock.Text = "";
-				OpponentTeamComboBox.ItemsSource = null;
-				OpponentTeamComboBox.SelectedItem = null;
-				// Save the cleared favorite team selection
+			// Add error handling for initialization
+			Loaded += async (s, e) => {
 				try
 				{
-					if (File.Exists(FavoriteTeamFilePath)) File.Delete(FavoriteTeamFilePath);
+					await InitializeAsync();
 				}
-				catch (IOException ex)
+				catch (Exception ex)
 				{
-					// Handle error (e.g., log it, show a non-critical message)
-					System.Diagnostics.Debug.WriteLine($"Could not clear favorite team file: {ex.Message}");
+					MessageBox.Show($"Error during initialization: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					IsLoading = false;
 				}
-				return;
-			}
-
-			// Save the selected favorite team's FIFA code
-			try
-			{
-				File.WriteAllText(FavoriteTeamFilePath, team1.FifaCode);
-			}
-			catch (IOException ex)
-			{
-				// Handle error (e.g., log it, show a non-critical message)
-				MessageBox.Show($"Could not save favorite team: {ex.Message}", "File Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-			}
-
-
-			// Find opponent codes from the already loaded _matches list
-			var opponentCodes = _matches
-				.Where(m => m.HomeTeam.FifaCode == team1.FifaCode || m.AwayTeam.FifaCode == team1.FifaCode)
-				.Select(m => m.HomeTeam.FifaCode == team1.FifaCode ? m.AwayTeam.FifaCode : m.HomeTeam.FifaCode)
-				.Distinct()
-				.ToList();
-
-			var opponents = _teams
-				.Where(t => opponentCodes.Contains(t.FifaCode))
-				.OrderBy(t => t.Country)
-				.ToList();
-
-			OpponentTeamComboBox.ItemsSource = opponents;
-			OpponentTeamComboBox.DisplayMemberPath = "Country"; // Assumes Team class has a 'Country' property
-			OpponentTeamComboBox.SelectedIndex = -1; // Clear previous opponent selection
-			MatchResultTextBlock.Text = ""; // Reset result text
+			};
 		}
 
-		// --- CRITICAL FIX HERE ---
-		// This method no longer needs to be async because we are querying data already in memory.
-		// Calling _dataManager.GetMatchBetweenTeamsAsync here was inefficient as it would
-		// re-fetch ALL matches from the internet every time an opponent was selected.
-		private void OpponentTeamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged(string name) =>
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+		private async Task InitializeAsync()
 		{
-			var team1 = FavoriteTeamComboBox.SelectedItem as Team; // Favorite team
-			var team2 = OpponentTeamComboBox.SelectedItem as Team; // Opponent team
-
-			if (team1 == null || team2 == null) // Don't proceed if either team isn't selected
+			try
 			{
-				MatchResultTextBlock.Text = ""; // Clear result if selection is incomplete
+				IsLoading = true;
+				isInitializing = true;
+
+				dataManager = new DataManager();
+
+				var allTeams = await dataManager.GetTeamsAsync(ConfigurationManager.SelectedChampionship);
+				Teams = allTeams.OrderBy(t => t.Country).ToList();
+
+				SelectedTeam = Teams.FirstOrDefault(t => t.FifaCode == ConfigurationManager.SelectedTeam)
+							   ?? Teams.FirstOrDefault();
+
+				isInitializing = false;
+
+				// Now update match result after initialization is complete
+				if (SelectedTeam != null)
+				{
+					await UpdateMatchResult();
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Error loading teams: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				throw;
+			}
+			finally
+			{
+				IsLoading = false;
+				isInitializing = false;
+			}
+		}
+
+		private async Task UpdateMatchResult()
+		{
+			if (SelectedTeam == null || isInitializing) return;
+
+			try
+			{
+				IsLoading = true;
+
+				ConfigurationManager.SelectedTeam = SelectedTeam.FifaCode;
+
+				var matches = await dataManager.GetMatchesAsync(ConfigurationManager.SelectedChampionship);
+
+				// Fix the LINQ query - compare FifaCode with FifaCode, not Country with FifaCode
+				Opponents = matches
+					.Where(m => m.HomeTeam.FifaCode == SelectedTeam.FifaCode || m.AwayTeam.FifaCode == SelectedTeam.FifaCode)
+					.Select(m => m.HomeTeam.FifaCode == SelectedTeam.FifaCode ? m.AwayTeam : m.HomeTeam)
+					.Distinct()
+					.OrderBy(t => t.Country)
+					.ToList();
+
+				if (Opponents.Count > 0 && SelectedOpponent == null)
+					SelectedOpponent = Opponents[0];
+
+				if (SelectedOpponent != null)
+				{
+					currentMatch = await dataManager.GetMatchBetweenTeamsAsync(
+						ConfigurationManager.SelectedChampionship,
+						SelectedTeam.FifaCode,
+						SelectedOpponent.FifaCode);
+				}
+
+				DisplayMatchResult();
+
+				// Add a small delay to ensure canvas is rendered before displaying lineups
+				await Task.Delay(100);
+				DisplayStartingLineups();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Error updating match result: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+			finally
+			{
+				IsLoading = false;
+			}
+		}
+
+		private void DisplayMatchResult()
+		{
+			if (currentMatch == null)
+			{
+				lblResult.Text = string.Empty;
 				return;
 			}
 
-			// It's possible for team1 and team2 to be the same if the logic in FavoriteTeamComboBox_SelectionChanged
-			// doesn't exclude the favorite team from the opponent list.
-			// Current logic seems to correctly list only *other* teams as opponents.
-			// if (team1.FifaCode == team2.FifaCode) return; // This check is technically redundant if opponent list is always different.
+			lblResult.Text = currentMatch.Status == "completed"
+				? $"{currentMatch.HomeTeam.Country} {currentMatch.HomeTeamGoals} : {currentMatch.AwayTeamGoals} {currentMatch.AwayTeam.Country}"
+				: $"{currentMatch.HomeTeam.Country} vs {currentMatch.AwayTeam.Country}";
+		}
 
-			// --- THE FIX ---
-			// Instead of calling: await _dataManager.GetMatchBetweenTeamsAsync(...)
-			// Query the _matches list that is already loaded into memory.
-			var match = _matches.FirstOrDefault(m =>
-				(m.HomeTeam.FifaCode == team1.FifaCode && m.AwayTeam.FifaCode == team2.FifaCode) ||
-				(m.HomeTeam.FifaCode == team2.FifaCode && m.AwayTeam.FifaCode == team1.FifaCode));
+		private void DisplayStartingLineups()
+		{
+			fieldCanvas.Children.Clear();
 
-			if (match == null)
-			{
-				MatchResultTextBlock.Text = "No match found between these teams.";
+			if (currentMatch?.HomeTeamStatistics?.StartingEleven == null ||
+				currentMatch?.AwayTeamStatistics?.StartingEleven == null)
 				return;
-			}
 
-			int score1, score2;
+			// Force layout update to get actual canvas dimensions
+			fieldCanvas.UpdateLayout();
 
-			// Determine which score belongs to team1 (the favorite team)
-			if (match.HomeTeam.FifaCode == team1.FifaCode)
+			double canvasWidth = fieldCanvas.ActualWidth;
+			double canvasHeight = fieldCanvas.ActualHeight;
+
+			// If canvas still has no size, use default dimensions
+			if (canvasWidth <= 0) canvasWidth = 800;
+			if (canvasHeight <= 0) canvasHeight = 400;
+
+			var homePositions = GenerateFormationPositions(currentMatch.HomeTeamStatistics.StartingEleven.Count, canvasWidth, canvasHeight, true);
+			var awayPositions = GenerateFormationPositions(currentMatch.AwayTeamStatistics.StartingEleven.Count, canvasWidth, canvasHeight, false);
+
+			PlacePlayersInPosition(currentMatch.HomeTeamStatistics.StartingEleven, homePositions, -50);
+			PlacePlayersInPosition(currentMatch.AwayTeamStatistics.StartingEleven, awayPositions, 50);
+		}
+
+		private List<Point> GenerateFormationPositions(int playerCount, double canvasWidth, double canvasHeight, bool isHomeTeam)
+		{
+			var positions = new List<Point>();
+			double spacingX = canvasWidth / (playerCount + 1);
+			double startX = spacingX;
+
+			double y = canvasHeight / 2;
+
+			for (int i = 0; i < playerCount; i++)
 			{
-				score1 = match.HomeTeamGoals;
-				score2 = match.AwayTeamGoals;
-			}
-			else // team1 must have been the AwayTeam in this match
-			{
-				score1 = match.AwayTeamGoals;
-				score2 = match.HomeTeamGoals;
+				double x = isHomeTeam ? startX + spacingX * i : canvasWidth - (startX + spacingX * i);
+				positions.Add(new Point(x, y));
 			}
 
-			MatchResultTextBlock.Text = $"{team1.Country} {score1} : {score2} {team2.Country}";
+			return positions;
+		}
+
+		private void PlacePlayersInPosition(List<Player> players, List<Point> positions, int yOffset)
+		{
+			for (int i = 0; i < players.Count && i < positions.Count; i++)
+			{
+				var player = players[i];
+				var position = positions[i];
+
+				// Create a simple representation instead of PlayerControl if it doesn't exist
+				var playerControl = CreatePlayerControl(player);
+
+				if (playerControl is FrameworkElement fe)
+				{
+					Canvas.SetLeft(playerControl, position.X - fe.Width / 2);
+					Canvas.SetTop(playerControl, position.Y + yOffset - fe.Height / 2);
+
+					fieldCanvas.Children.Add(playerControl);
+
+					// Animate player drop-in
+					var anim = new DoubleAnimation
+					{
+						From = -100,
+						To = position.Y + yOffset - fe.Height / 2,
+						Duration = TimeSpan.FromSeconds(0.5)
+					};
+
+					playerControl.BeginAnimation(Canvas.TopProperty, anim);
+				}
+				else
+				{
+					// Fallback positioning without animation
+					Canvas.SetLeft(playerControl, position.X - 20);
+					Canvas.SetTop(playerControl, position.Y + yOffset - 20);
+					fieldCanvas.Children.Add(playerControl);
+				}
+			}
+		}
+
+		private UIElement CreatePlayerControl(Player player)
+		{
+			// For now, just use the fallback control since PlayerControl type is causing issues
+			// You can replace this with proper PlayerControl creation once the type issues are resolved
+			return CreateFallbackControl(player);
+
+			/*
+            // Uncomment this section once PlayerControl inheritance is fixed
+            try
+            {
+                var playerControl = new PlayerControl(player)
+                {
+                    Width = 40,
+                    Height = 40
+                };
+
+                playerControl.MouseLeftButtonDown += (s, e) =>
+                {
+                    try
+                    {
+                        var detailsWindow = new PlayerDetailsWindow(player);
+                        detailsWindow.Owner = this;
+                        detailsWindow.ShowDialog();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error showing player details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                };
+
+                return playerControl;
+            }
+            catch
+            {
+                return CreateFallbackControl(player);
+            }
+            */
+		}
+
+		private void PlayerControl_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			// This method will be called when PlayerControl is clicked
+			// You can add your player details logic here if needed
+		}
+
+		private Button CreateFallbackControl(Player player)
+		{
+			var button = new Button
+			{
+				Content = player.Name,
+				Width = 40,
+				Height = 40,
+				FontSize = 8
+			};
+
+			button.Click += (s, e) =>
+			{
+				MessageBox.Show($"Player: {player.Name}\nPosition: {player.Position}", "Player Info", MessageBoxButton.OK, MessageBoxImage.Information);
+			};
+
+			return button;
+		}
+
+		private void BtnTeamInfo_Click(object sender, RoutedEventArgs e)
+		{
+			if (SelectedTeam == null) return;
+
+			try
+			{
+				var teamInfoWindow = new TeamInfoWindow(SelectedTeam);
+				teamInfoWindow.Owner = this;
+				teamInfoWindow.ShowDialog();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Error showing team info: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
+
+		private void BtnSettings_Click(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				var settingsWindow = new SettingsWindow();
+				settingsWindow.Owner = this;
+
+				if (settingsWindow.ShowDialog() == true)
+				{
+					_ = InitializeAsync();
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Error opening settings: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
+
+		private void CmbSelectedTeam_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (cmbSelectedTeam.SelectedItem is Team team)
+			{
+				SelectedTeam = team;
+			}
+		}
+
+		private void CmbSelectedOpponent_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (cmbSelectedOpponent.SelectedItem is Team opponent)
+			{
+				SelectedOpponent = opponent;
+			}
 		}
 	}
 }

@@ -33,6 +33,13 @@ namespace DataLayer
 				return jsonDataService.GetMatchesFromJson(championship);
 		}
 
+		// NEW METHOD: Get available championships
+		public async Task<List<string>> GetAvailableChampionshipsAsync()
+		{
+			// Return the two available championship categories
+			return await Task.FromResult(new List<string> { "men", "women" });
+		}
+
 		// This method was missing from the original implementation
 		public async Task<List<Match>> GetTeamMatchesAsync(string championship, string fifaCode)
 		{
@@ -47,7 +54,6 @@ namespace DataLayer
 		{
 			var teamMatches = await GetTeamMatchesAsync(championship, fifaCode);
 			var firstMatch = teamMatches.FirstOrDefault();
-
 			if (firstMatch == null)
 				return new List<Player>();
 
@@ -72,7 +78,6 @@ namespace DataLayer
 		public async Task<Match> GetMatchBetweenTeamsAsync(string championship, string team1FifaCode, string team2FifaCode)
 		{
 			var allMatches = await GetMatchesAsync(championship);
-
 			return allMatches.FirstOrDefault(match =>
 				(match.HomeTeam?.FifaCode == team1FifaCode && match.AwayTeam?.FifaCode == team2FifaCode) ||
 				(match.HomeTeam?.FifaCode == team2FifaCode && match.AwayTeam?.FifaCode == team1FifaCode)
