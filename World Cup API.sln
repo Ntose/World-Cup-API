@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\Data
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormsApp", "WinFormsApp\WinFormsApp.csproj", "{92B05F4F-7718-4F9C-B092-EAD0F93F8FD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp", "WpfApp\WpfApp.csproj", "{AE5E9D7B-4B99-435E-9FF7-22E9B2D94FDF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp", "WpfApp\WpfApp.csproj", "{CB6F792A-F0F6-403E-9349-6C8E028E83B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{92B05F4F-7718-4F9C-B092-EAD0F93F8FD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92B05F4F-7718-4F9C-B092-EAD0F93F8FD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92B05F4F-7718-4F9C-B092-EAD0F93F8FD8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AE5E9D7B-4B99-435E-9FF7-22E9B2D94FDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AE5E9D7B-4B99-435E-9FF7-22E9B2D94FDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AE5E9D7B-4B99-435E-9FF7-22E9B2D94FDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AE5E9D7B-4B99-435E-9FF7-22E9B2D94FDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB6F792A-F0F6-403E-9349-6C8E028E83B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB6F792A-F0F6-403E-9349-6C8E028E83B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB6F792A-F0F6-403E-9349-6C8E028E83B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB6F792A-F0F6-403E-9349-6C8E028E83B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
