@@ -4,6 +4,8 @@ namespace DataLayer.Models
 {
 	public class Team
 	{
+		
+
 		[JsonProperty("country")]
 		public string Country { get; set; }
 

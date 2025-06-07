@@ -1,5 +1,4 @@
-﻿<!-- MainWindow.xaml -->
-<Window x:Class="WpfApp.MainWindow"
+﻿<Window x:Class="WpfApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,7 +6,8 @@
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
         MinHeight="600" MinWidth="800"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Title="World Cup Viewer">
 
     <Window.Resources>
         <!-- Loading Animation Style -->
@@ -55,9 +55,9 @@
         <!-- Menu Bar -->
         <Menu Grid.Row="0">
             <MenuItem Header="{Binding SettingsMenuText}">
-                <MenuItem Header="{Binding ChangeSettingsText}"/>
+                <MenuItem Header="{Binding ChangeSettingsText}" Click="ChangeSettings_Click"/>
                 <Separator/>
-                <MenuItem Header="{Binding ExitText}"/>
+                <MenuItem Header="{Binding ExitText}" Click="Exit_Click"/>
             </MenuItem>
         </Menu>
 
@@ -65,17 +65,20 @@
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
             <StackPanel Margin="10">
                 <TextBlock Text="{Binding SelectTeamText}" FontWeight="Bold" Margin="0,0,0,5"/>
-                <ComboBox Name="cmbSelectedTeam" Width="200" 
-                          ItemsSource="{Binding Teams}" 
-                          SelectedItem="{Binding SelectedTeam}"
-                          SelectionChanged="CmbSelectedTeam_SelectionChanged"/>
+                <ComboBox Name="cmbSelectedTeam"
+                Width="200"
+                ItemsSource="{Binding Teams}"
+                DisplayMemberPath="Country"
+                SelectedItem="{Binding SelectedTeam, Mode=TwoWay}"
+                SelectionChanged="CmbSelectedTeam_SelectionChanged"/>
+
             </StackPanel>
 
             <StackPanel Margin="10">
                 <TextBlock Text="{Binding SelectOpponentText}" FontWeight="Bold" Margin="0,0,0,5"/>
                 <ComboBox Name="cmbSelectedOpponent" Width="200"
-                          ItemsSource="{Binding Opponents}"
-                          SelectedItem="{Binding SelectedOpponent}"
+                          ItemsSource="{Binding Opponents}" 
+                          SelectedItem="{Binding SelectedOpponent, Mode=TwoWay}" 
                           SelectionChanged="CmbSelectedOpponent_SelectionChanged"/>
             </StackPanel>
 
@@ -92,20 +95,23 @@
             <Button Name="btnSelectedTeamInfo" Content="{Binding SelectedTeamInfoText}" 
                     Width="150" Height="30" Margin="5"
                     Style="{StaticResource AnimatedButtonStyle}"
-                    IsEnabled="{Binding HasSelectedTeam}"/>
+                    IsEnabled="{Binding HasSelectedTeam}"
+                    Click="BtnSelectedTeamInfo_Click"/>
+
             <Button Name="btnOpponentTeamInfo" Content="{Binding OpponentTeamInfoText}" 
                     Width="150" Height="30" Margin="5"
                     Style="{StaticResource AnimatedButtonStyle}"
-                    IsEnabled="{Binding HasSelectedOpponent}"/>
+                    IsEnabled="{Binding HasSelectedOpponent}"
+                    Click="BtnOpponentTeamInfo_Click"/>
         </StackPanel>
 
         <!-- Main Content Area -->
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="0,0,0,5" HorizontalAlignment="Center" Width="320">
             <Grid Name="footballField" Margin="20">
                 <Grid.Background>
-                    <ImageBrush ImageSource="Resources/football_field.png" Stretch="Fill"/>
+                    <ImageBrush ImageSource="Resources/football_field.png" Stretch="UniformToFill"
+                                />
                 </Grid.Background>
-                <!-- Field visualization will be populated programmatically -->
                 <Canvas Name="fieldCanvas" ClipToBounds="True"/>
             </Grid>
         </ScrollViewer>

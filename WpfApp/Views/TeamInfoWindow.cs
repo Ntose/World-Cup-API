@@ -115,7 +115,6 @@ namespace WpfApp
 			detailsPanel.Children.Add(CreateInfoSection("Basic Information"));
 			detailsPanel.Children.Add(CreateDetailRow("Country:", ""));
 			detailsPanel.Children.Add(CreateDetailRow("FIFA Code:", ""));
-			detailsPanel.Children.Add(CreateDetailRow("Group Letter:", ""));
 
 			detailsContent.Content = detailsPanel;
 			detailsTab.Content = detailsContent;
@@ -139,8 +138,15 @@ namespace WpfApp
 			};
 
 			statsPanel.Children.Add(CreateInfoSection("Team Statistics"));
-			statsPanel.Children.Add(new Label { Content = "Statistics will be displayed here when available." });
-
+			statsPanel.Children.Add
+				(CreateDetailRow("Games Played:", team.GamesPlayed.ToString()));
+			statsPanel.Children.Add(CreateDetailRow("Wins:", team.Wins.ToString()));
+			statsPanel.Children.Add(CreateDetailRow("Draws:", team.Draws.ToString()));
+			statsPanel.Children.Add(CreateDetailRow("Losses:", team.Losses.ToString()));
+			statsPanel.Children.Add(CreateDetailRow("Goals For:", team.GoalsFor.ToString()));
+			statsPanel.Children.Add(CreateDetailRow("Goals Against:", team.GoalsAgainst.ToString()));
+			statsPanel.Children.Add(CreateDetailRow("Goal Differential:", team.GoalDifferential.ToString()));
+			statsPanel.Children.Add(CreateDetailRow("Points:", team.Points.ToString()));
 			statsContent.Content = statsPanel;
 			statsTab.Content = statsContent;
 
