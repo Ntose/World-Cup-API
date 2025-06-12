@@ -1,12 +1,23 @@
 ﻿<UserControl x:Class="WpfApp.PlayerControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Width="100" Height="100">
-    <Border BorderBrush="Black" BorderThickness="1" Padding="5" MinHeight="100" MinWidth="100">
-        <StackPanel>
-            <Image x:Name="PlayerImage" Width="60" Height="60" />
-            <TextBlock x:Name="PlayerName" Text="Name" TextAlignment="Center"/>
-            <TextBlock x:Name="PlayerNumber" Text="#0" TextAlignment="Center"/>
-        </StackPanel>
+             Width="224" Height="Auto">
+    <Border BorderBrush="Black" BorderThickness="1" Padding="2" MinWidth="100" HorizontalAlignment="Left" Width="224">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <!-- Left column is auto-sized to the image -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- Right column takes up remaining space -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!-- Image on the left -->
+            <Image x:Name="PlayerImage" Width="46" Height="46" 
+                   Source="/Resources/DefaultPlayer.jpg" Stretch="Fill" />
+            <!-- Right column: stack the text vertically -->
+            <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" Margin="4,0,0,0">
+                <TextBlock x:Name="PlayerName" Text="Name" TextAlignment="Left" FontSize="14" />
+                <TextBlock x:Name="PlayerNumber" Text="#0" TextAlignment="Left" FontSize="10" />
+            </StackPanel>
+        </Grid>
     </Border>
 </UserControl>

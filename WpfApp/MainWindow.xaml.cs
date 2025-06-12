@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq; // For manual JSON parsing
 using DataLayer.Models;
 using DataLayer;
 using WorldCupStats.WinFormsApp.Helpers;
@@ -17,10 +18,13 @@ namespace WpfApp
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		// Store the full list of teams for use later (e.g. when retrieving opposing team codes).
+		private List<Team> allTeams;
+
 		public MainWindow()
 		{
 			InitializeComponent();
-			// Load team and match data on start
+			// Load teams and match data on startup.
 			LoadTeams();
 			LoadMatchDataForSelectedTeam();
 			HomeTeamComboBox.SelectionChanged += HomeTeamComboBox_SelectionChanged;
@@ -29,13 +33,15 @@ namespace WpfApp
 		private async void LoadTeams()
 		{
 			var teams = await ApiService.GetTeamsAsync(ConfigurationManager.SelectedChampionship);
+			allTeams = teams; // store for later lookup
 
-			// Bind the full team objects to the ComboBox.
-			HomeTeamComboBox.ItemsSource = teams.OrderBy(team => team.Country).ToList();
+			// Bind the full team objects to the ComboBox so that we can later access properties like FifaCode.
+			HomeTeamComboBox.ItemsSource = teams.OrderBy(t => t.Country).ToList();
 			HomeTeamComboBox.DisplayMemberPath = "Country";
 
 			try
 			{
+				// If the configuration holds a favorite team, select it; otherwise select the first team.
 				if (teams.Any(t => t.Country == ConfigurationManager.SelectedTeam))
 				{
 					var favTeam = teams.FirstOrDefault(t => t.Country == ConfigurationManager.FavoriteTeam);
@@ -48,25 +54,23 @@ namespace WpfApp
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show($"Error selecting default team: {ex.Message}",
-								"Selection Error",
-								MessageBoxButton.OK,
-								MessageBoxImage.Warning);
+				MessageBox.Show("Error selecting default team: " + ex.Message,
+								"Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
 			}
 		}
 
 		private async void LoadMatchDataForSelectedTeam()
 		{
-			// Retrieve all matches for the selected championship.
+			// Retrieve all matches for the championship.
 			var matches = await ApiService.GetMatchesAsync(ConfigurationManager.SelectedChampionship);
 
-			// Locate the match based on the favorite team’s FIFA code.
+			// Find a match based on the favorite team’s FIFA code.
 			var match = matches.FirstOrDefault(m =>
 				string.Equals(m.HomeTeam?.FifaCode, ConfigurationManager.FavoriteTeamCode, StringComparison.OrdinalIgnoreCase));
 
 			if (match != null)
 			{
-				// Populate the OpposingTeamComboBox with the away team.
+				// Populate the opposing team ComboBox with the away team's country.
 				OpposingTeamComboBox.ItemsSource = new List<string> { match.AwayTeam.Country };
 				OpposingTeamComboBox.SelectedIndex = 0;
 			}
@@ -89,7 +93,7 @@ namespace WpfApp
 				return;
 			}
 
-			// Retrieve all matches for the championship.
+			// Retrieve match data.
 			var matches = await ApiService.GetMatchesAsync(ConfigurationManager.SelectedChampionship);
 			if (matches == null)
 			{
@@ -97,7 +101,7 @@ namespace WpfApp
 				return;
 			}
 
-			// Get the first match where the home team's country matches the selected team.
+			// Get the first match where the selected team's country appears as the home team.
 			var match = matches.FirstOrDefault(m =>
 				string.Equals(m.HomeTeam?.Country, selectedTeam.Country, StringComparison.OrdinalIgnoreCase));
 
@@ -106,20 +110,20 @@ namespace WpfApp
 				var opponentTeams = matches
 					.Where(m => string.Equals(m.HomeTeam?.Country, selectedTeam.Country, StringComparison.OrdinalIgnoreCase))
 					.Select(m => m.AwayTeam?.Country)
-					.Where(awayCountry => !string.IsNullOrEmpty(awayCountry))
+					.Where(country => !string.IsNullOrEmpty(country))
 					.Distinct()
-					.OrderBy(awayCountry => awayCountry)
+					.OrderBy(country => country)
 					.ToList();
 
 				OpposingTeamComboBox.ItemsSource = opponentTeams;
 				if (opponentTeams.Any())
 					OpposingTeamComboBox.SelectedIndex = 0;
 
-				// Random simulation for match result.
+				// Simulate a random match result.
 				Random random = new Random();
-				int homeTeamGoals = random.Next(0, 4);
-				int awayTeamGoals = random.Next(0, 4);
-				MatchResultTextBlock.Text = $"{homeTeamGoals} - {awayTeamGoals}";
+				int homeGoals = random.Next(0, 4);
+				int awayGoals = random.Next(0, 4);
+				MatchResultTextBlock.Text = $"{homeGoals} - {awayGoals}";
 			}
 			else
 			{
@@ -130,9 +134,9 @@ namespace WpfApp
 
 		private async void OpposingTeamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			// This event updates any match result simulation whenever the opposing team selection changes.
 			if (OpposingTeamComboBox.SelectedItem == null)
 				return;
-
 			string selectedOpposingTeam = OpposingTeamComboBox.SelectedItem.ToString();
 			var matches = await ApiService.GetMatchesAsync(ConfigurationManager.SelectedChampionship);
 			if (matches == null)
@@ -143,21 +147,22 @@ namespace WpfApp
 
 			var match = matches.FirstOrDefault(m =>
 				string.Equals(m.AwayTeam?.Country, selectedOpposingTeam, StringComparison.OrdinalIgnoreCase));
-
 			if (match == null)
 			{
 				MessageBox.Show("Selected match not found.");
 				return;
 			}
 
+			// Simulate random match result.
 			Random random = new Random();
-			int homeTeamGoals = random.Next(0, 4);
-			int awayTeamGoals = random.Next(0, 4);
-			MatchResultTextBlock.Text = $"{homeTeamGoals} - {awayTeamGoals}";
+			int homeGoals = random.Next(0, 4);
+			int awayGoals = random.Next(0, 4);
+			MatchResultTextBlock.Text = $"{homeGoals} - {awayGoals}";
 		}
 
 		private async void LoadMatchPlayers_Click(object sender, RoutedEventArgs e)
 		{
+			// Load players for the home team.
 			if (HomeTeamComboBox.SelectedItem == null)
 				return;
 
@@ -170,67 +175,164 @@ namespace WpfApp
 			if (players == null)
 				return;
 
-			HomePlayersGrid.Children.Clear(); // Clear old player controls.
-
+			HomePlayersGrid.Children.Clear();
 			foreach (var player in players)
 			{
 				var playerControl = new PlayerControl(player);
 				HomePlayersGrid.Children.Add(playerControl);
 			}
+
+			//////////////////////////////////////
+			// Now load players for the opposing team.
+			// Because OpposingTeamComboBox is bound to a list of strings (country names), we first get the country.
+			string oppCountry = OpposingTeamComboBox.SelectedItem?.ToString();
+			if (string.IsNullOrEmpty(oppCountry))
+				return;
+
+			// Retrieve matches again.
+			var matchesOpp = await ApiService.GetMatchesAsync(ConfigurationManager.SelectedChampionship);
+			if (matchesOpp == null)
+			{
+				MessageBox.Show("No match data loaded.");
+				return;
+			}
+
+			var matchOpp = matchesOpp.FirstOrDefault(m =>
+				string.Equals(m.AwayTeam?.Country, oppCountry, StringComparison.OrdinalIgnoreCase));
+			if (matchOpp == null)
+			{
+				MessageBox.Show("No match found for the opposing team.");
+				return;
+			}
+
+			// Attempt to retrieve the away team's FIFA code.
+			fifaCode = matchOpp.AwayTeam?.FifaCode;
+			if (string.IsNullOrEmpty(fifaCode))
+			{
+				// As a fallback, try looking it up in the stored teams list.
+				Team oppTeam = allTeams.FirstOrDefault(t =>
+					string.Equals(t.Country, oppCountry, StringComparison.OrdinalIgnoreCase));
+				if (oppTeam != null)
+					fifaCode = oppTeam.FifaCode;
+			}
+			if (string.IsNullOrEmpty(fifaCode))
+			{
+				MessageBox.Show("Opposing team FIFA code not available.");
+				return;
+			}
+
+			players = await GetHomeTeamPlayers(fifaCode);
+			if (players == null)
+				return;
+
+			OpponentPlayersGrid.Children.Clear();
+			foreach (var player in players)
+			{
+				var playerControl = new PlayerControl(player);
+				OpponentPlayersGrid.Children.Add(playerControl);
+			}
 		}
 
-		// Updated GetHomeTeamPlayers method: if settings are not loaded, default to English and Men's tournament.
+		// Manually parse the JSON inside of MainWindow.xaml.cs.
 		private async Task<List<Player>> GetHomeTeamPlayers(string fifaCode)
 		{
 			var settings = ConfigManager.LoadSettings();
 			if (settings == null)
 			{
-				// Default to English and men's tournament if the config file doesn't exist.
+				// Default settings when the file doesn't exist.
 				settings = new AppSettings
 				{
 					Language = "en",
-					Tournament = "men"  // Adjust this value if the API expects a different tournament string.
+					Tournament = "men"
 				};
 			}
 
 			try
 			{
 				string url = $"https://worldcup-vua.nullbit.hr/{settings.Tournament}/matches/country?fifa_code={fifaCode}";
+				System.Diagnostics.Debug.WriteLine("Constructed URL: " + url);
+
 				using (HttpClient client = new HttpClient())
 				{
 					string json = await client.GetStringAsync(url);
-					var matches = JsonConvert.DeserializeObject<List<DataLayer.Models.Match>>(json);
+					System.Diagnostics.Debug.WriteLine("Raw JSON: " + json);
 
-					if (matches == null || !matches.Any())
+					// Parse JSON using JArray for manual processing.
+					JArray jMatches = JArray.Parse(json);
+					if (jMatches.Count == 0)
 					{
 						MessageBox.Show("No matches were returned from the API.");
 						return null;
 					}
 
-					// Optional: debug the returned matches.
-					System.Diagnostics.Debug.WriteLine($"Returned matches count: {matches.Count}");
-					foreach (var m in matches)
+					JObject matchFound = null;
+					foreach (JObject jMatch in jMatches)
 					{
-						System.Diagnostics.Debug.WriteLine($"Match: Home Team - {m.HomeTeam?.FifaCode ?? "N/A"}, Away Team - {m.AwayTeam?.FifaCode ?? "N/A"}");
+						JObject jHomeTeam = jMatch["home_team"] as JObject;
+						JObject jAwayTeam = jMatch["away_team"] as JObject;
+						string homeTeamCode = jHomeTeam?["code"]?.ToString() ?? jHomeTeam?["fifa_code"]?.ToString();
+						string awayTeamCode = jAwayTeam?["code"]?.ToString() ?? jAwayTeam?["fifa_code"]?.ToString();
+
+						if (!string.IsNullOrEmpty(homeTeamCode))
+							homeTeamCode = homeTeamCode.ToUpperInvariant();
+						if (!string.IsNullOrEmpty(awayTeamCode))
+							awayTeamCode = awayTeamCode.ToUpperInvariant();
+
+						if (string.Equals(homeTeamCode, fifaCode, StringComparison.OrdinalIgnoreCase) ||
+							string.Equals(awayTeamCode, fifaCode, StringComparison.OrdinalIgnoreCase))
+						{
+							matchFound = jMatch;
+							break;
+						}
 					}
 
-					// Use case-insensitive comparison
-					var match = matches.FirstOrDefault(m =>
-						string.Equals(m.HomeTeam?.FifaCode, fifaCode, StringComparison.OrdinalIgnoreCase) ||
-						string.Equals(m.AwayTeam?.FifaCode, fifaCode, StringComparison.OrdinalIgnoreCase));
-
-					if (match == null)
+					if (matchFound == null)
 					{
 						MessageBox.Show("No match found for this team in the returned data.");
 						return null;
 					}
 
-					// Return the starting eleven based on whether the team is home or away.
-					if (string.Equals(match.HomeTeam?.FifaCode, fifaCode, StringComparison.OrdinalIgnoreCase))
-						return match.HomeTeamStatistics?.StartingEleven;
-					else
-						return match.AwayTeamStatistics?.StartingEleven;
+					JObject foundHomeTeam = matchFound["home_team"] as JObject;
+					string foundHomeCode = foundHomeTeam?["code"]?.ToString() ?? foundHomeTeam?["fifa_code"]?.ToString();
+					bool isHomeTeam = string.Equals(foundHomeCode, fifaCode, StringComparison.OrdinalIgnoreCase);
+
+					JObject jTeamStatistics = isHomeTeam ?
+						(matchFound["home_team_statistics"] as JObject) :
+						(matchFound["away_team_statistics"] as JObject);
+
+					if (jTeamStatistics == null)
+					{
+						MessageBox.Show("Team statistics not available.");
+						return null;
+					}
+
+					JArray jStartingEleven = jTeamStatistics["starting_eleven"] as JArray;
+					if (jStartingEleven == null)
+					{
+						MessageBox.Show("Starting eleven not available.");
+						return null;
+					}
+
+					List<Player> players = new List<Player>();
+					foreach (JObject jPlayer in jStartingEleven)
+					{
+						Player p = new Player
+						{
+							Name = jPlayer["name"]?.ToString(),
+							ShirtNumber = jPlayer["shirt_number"] != null ? (int)jPlayer["shirt_number"] : 0,
+							Position = jPlayer["position"]?.ToString(),
+							Captain = jPlayer["captain"] != null ? (bool)jPlayer["captain"] : false,
+							ImagePath = jPlayer["image_path"]?.ToString() ?? ""
+						};
+						players.Add(p);
+					}
+					return players;
 				}
+			}
+			catch (HttpRequestException hre)
+			{
+				MessageBox.Show($"HTTP error: {hre.Message}", "HTTP Request Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				return null;
 			}
 			catch (Exception ex)
 			{
@@ -239,19 +341,17 @@ namespace WpfApp
 			}
 		}
 
-
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			// For testing: add a dummy player control.
+			// For testing purposes, add a dummy player control.
 			var dummyPlayer = new Player
 			{
 				Name = "Test Player",
 				ShirtNumber = 10,
 				Position = "Midfield",
 				Captain = true,
-				ImagePath = "" // Use default image when empty.
+				ImagePath = ""
 			};
-
 			var playerControl = new PlayerControl(dummyPlayer);
 			HomePlayersGrid.Children.Clear();
 			HomePlayersGrid.Children.Add(playerControl);

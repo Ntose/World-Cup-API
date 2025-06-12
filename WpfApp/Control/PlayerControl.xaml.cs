@@ -2,6 +2,9 @@
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using DataLayer.Models;
+using WpfApp.Properties;
+using DataLayer;
+using System;
 
 namespace WpfApp
 {
@@ -20,7 +23,8 @@ namespace WpfApp
 			else
 			{
 				// fallback (ensure this exists in Resources)
-				PlayerImage.Source = new BitmapImage(new System.Uri("pack://application:,,,/Resources/DefaultPlayer.png"));
+				PlayerImage.Resources["DefaultPlayerImage"] = new BitmapImage(new System.Uri("pack://application:,,,/Resources/DefaultPlayer.jpg"));
+
 			}
 		}
 	}
