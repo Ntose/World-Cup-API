@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Football Match Setup" Height="800" Width="1200">
     <Grid>
-        <!-- Settings Tab -->
-        <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <!-- Settings Tab at the top (can be expanded as needed) -->
+        <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="100">
             <TabItem Header="Settings">
                 <Grid>
                     <!-- Settings content goes here -->
@@ -12,33 +12,45 @@
             </TabItem>
         </TabControl>
 
-        <!-- Match Setup -->
-        <StackPanel Orientation="Vertical" Margin="10">
+        <!-- Main content area placed below the settings tab -->
+        <StackPanel Orientation="Vertical" Margin="10" VerticalAlignment="Top">
             <!-- Team Selection -->
-            <Grid>
+            <Grid Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" HorizontalAlignment="Center" Margin="20
-                            ">
-                    <TextBlock Text="Home Team:" FontWeight="Bold"/>
-                    <ComboBox x:Name="HomeTeamComboBox"/>
+                <!-- Home Team -->
+                <StackPanel Grid.Column="0" HorizontalAlignment="Center" Margin="20">
+                    <TextBlock Text="Home Team:" FontWeight="Bold" Margin="0,0,0,5" />
+                    <ComboBox x:Name="HomeTeamComboBox" Width="200"/>
                 </StackPanel>
 
-                <TextBlock Text="VS" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" Grid.Column="1" Margin="25"/>
+                <!-- VS Text -->
+                <TextBlock Text="VS" FontSize="24" FontWeight="Bold" 
+                           VerticalAlignment="Center" Grid.Column="1" Margin="25"/>
 
+                <!-- Opposing Team -->
                 <StackPanel Grid.Column="2" HorizontalAlignment="Center" Margin="20">
-                    <TextBlock Text="Opposing Team:" FontWeight="Bold"/>
-                    <ComboBox x:Name="OpposingTeamComboBox" Width="150"/>
+                    <TextBlock Text="Opposing Team:" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="OpposingTeamComboBox" Width="200" 
+                              SelectionChanged="OpposingTeamComboBox_SelectionChanged"/>
                 </StackPanel>
             </Grid>
 
-            <!-- Match Result -->
-            <TextBlock x:Name="MatchResultTextBlock" Text="Match Result:" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
+            <!-- Match Result Display -->
+            <TextBlock x:Name="MatchResultTextBlock" Text="Match Result:" 
+                       FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
 
+            <!-- Button to Load Match Players -->
+            <Button Content="Load Match Players"
+                    Width="200"
+                    Height="40"
+                    HorizontalAlignment="Center"
+                    Margin="10"
+                    Click="LoadMatchPlayers_Click"/>
 
             <!-- Football Players Section -->
             <Grid Margin="10">
@@ -47,79 +59,20 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Home Team Players -->
-                <UniformGrid Columns="1" Rows="11" Grid.Column="0" HorizontalAlignment="Left">
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Home Player 1"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Home Player 2"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Home Player 3"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Home Player 4"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Home Player 5"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Home Player 6"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Home Player 7"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Home Player 8"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Home Player 9"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Home Player 10"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Home Player 11"/>
-                    </Border>
-                </UniformGrid>
+                <!-- Home Team Players Grid -->
+                <UniformGrid x:Name="HomePlayersGrid" 
+                             Columns="1" 
+                             Rows="11" 
+                             Grid.Column="0" 
+                             HorizontalAlignment="Left" 
+                             Background="LightGray"/>
 
-                <!-- Opposing Team Players -->
-                <UniformGrid Columns="1" Rows="11" Grid.Column="1" HorizontalAlignment="Right">
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Opposing Player 1"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Opposing Player 2"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Opposing Player 3"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Opposing Player 4"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Opposing Player 5"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Opposing Player 6"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Opposing Player 7"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Opposing Player 8"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Opposing Player 9"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Opposing Player 10"/>
-                    </Border>
-                    <Border BorderBrush="Black" BorderThickness="1" Padding="10" Margin="5">
-                        <TextBlock Text="Opposing Player 11"/>
-                    </Border>
-                </UniformGrid>
+                <!-- Opposing Team Players Grid -->
+                <UniformGrid x:Name="OpponentPlayersGrid" 
+                             Columns="1" 
+                             Rows="11" 
+                             Grid.Column="1" 
+                             HorizontalAlignment="Right"/>
             </Grid>
         </StackPanel>
     </Grid>
