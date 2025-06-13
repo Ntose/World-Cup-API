@@ -3,54 +3,82 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Football Match Setup" Height="856" Width="1200">
     <Grid Height="838" VerticalAlignment="Top">
-        <!-- Settings Tab at the top (can be expanded as needed) -->
-        <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="100">
-            <TabItem Header="Settings">
-                <Grid>
-                    <!-- Settings content goes here -->
-                </Grid>
-            </TabItem>
-        </TabControl>
+
+        <!-- Settings Tab at the top -->
+        <!-- A top DockPanel containing a Settings Button -->
+        <DockPanel Background="LightGray" Height="40" VerticalAlignment="Top">
+            <Border x:Name="SettingsPanel"
+            Background="Transparent"
+            Cursor="Hand"
+            Padding="10"
+            MouseLeftButtonUp="SettingsPanel_MouseLeftButtonUp">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="LightBlue" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="Settings"
+                   FontSize="14"
+                   FontWeight="Bold"
+                   VerticalAlignment="Center"
+                   Foreground="Black" />
+            </Border>
+        </DockPanel>
+
+
 
         <!-- Main content area placed below the settings tab -->
-        <StackPanel Orientation="Vertical" Margin="10" VerticalAlignment="Top">
-            <!-- Team Selection -->
+        <StackPanel Orientation="Vertical" Margin="10"  VerticalAlignment="Top">
+
+            <!-- Team Selection Grid -->
             <Grid Margin="10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="457*" />
+                    <ColumnDefinition Width="73*"/>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="530*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Home Team -->
-                <StackPanel Grid.Column="0" HorizontalAlignment="Center" Margin="20">
+                <!-- Home Team Section -->
+                <StackPanel Grid.Column="0" HorizontalAlignment="Left" Margin="110,20,0,20">
                     <TextBlock Text="Home Team:" FontWeight="Bold" Margin="0,0,0,5" />
-                    <ComboBox x:Name="HomeTeamComboBox" Width="200"/>
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox x:Name="HomeTeamComboBox" Width="200"/>
+                        <Button Content="Team Info" Margin="5,0,0,0" Click="HomeTeamInfoButton_Click"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <!-- VS Text -->
                 <TextBlock Text="VS" FontSize="24" FontWeight="Bold" 
-                           VerticalAlignment="Center" Grid.Column="1" Margin="25"/>
+                   VerticalAlignment="Center" Grid.Column="2" Margin="25,0,25,0"/>
 
-                <!-- Opposing Team -->
-                <StackPanel Grid.Column="2" HorizontalAlignment="Center" Margin="20">
+                <!-- Opposing Team Section -->
+                <StackPanel Grid.Column="3" HorizontalAlignment="Center" Margin="0,20,0,20">
                     <TextBlock Text="Opposing Team:" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="OpposingTeamComboBox" Width="200" 
-                              SelectionChanged="OpposingTeamComboBox_SelectionChanged"/>
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox x:Name="OpposingTeamComboBox" Width="200" 
+                      SelectionChanged="OpposingTeamComboBox_SelectionChanged"/>
+                        <Button Content="Team Info" Margin="5,0,0,0" Click="OpponentTeamInfoButton_Click"/>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
 
             <!-- Match Result Display -->
             <TextBlock x:Name="MatchResultTextBlock" Text="Match Result:" 
-                       FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
+                 FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
 
             <!-- Button to Load Match Players -->
             <Button Content="Load Match Players"
-                    Width="200"
-                    Height="40"
-                    HorizontalAlignment="Center"
-                    Margin="10"
-                    Click="LoadMatchPlayers_Click"/>
+              Width="200"
+              Height="40"
+              HorizontalAlignment="Center"
+              Margin="10"
+              Click="LoadMatchPlayers_Click"/>
 
             <!-- Football Players Section -->
             <Grid Margin="10">
@@ -61,18 +89,18 @@
 
                 <!-- Home Team Players Grid -->
                 <UniformGrid x:Name="HomePlayersGrid" 
-                             Columns="1" 
-                             Rows="11" 
-                             Grid.Column="0" 
-                             HorizontalAlignment="Left" 
-                             Background="LightGray"/>
+                     Columns="1" 
+                     Rows="11" 
+                     Grid.Column="0" 
+                     HorizontalAlignment="Left" 
+                     Background="LightGray"/>
 
                 <!-- Opposing Team Players Grid -->
                 <UniformGrid x:Name="OpponentPlayersGrid" 
-                             Columns="1" 
-                             Rows="11" 
-                             Grid.Column="1" 
-                             HorizontalAlignment="Right"/>
+                     Columns="1" 
+                     Rows="11" 
+                     Grid.Column="1" 
+                     HorizontalAlignment="Right"/>
             </Grid>
         </StackPanel>
     </Grid>

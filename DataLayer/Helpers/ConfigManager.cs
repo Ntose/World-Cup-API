@@ -41,7 +41,6 @@ namespace WorldCupStats.WinFormsApp.Helpers
 
 			return null;
 		}
-
 		public static void SaveSettings(string language, string tournament)
 		{
 			var content = $"Language={language}{Environment.NewLine}Tournament={tournament}";

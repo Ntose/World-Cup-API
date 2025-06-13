@@ -1,0 +1,51 @@
+﻿<Window x:Class="WpfApp.TeamInfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Team Info" Height="300" Width="400" WindowStyle="None"
+        AllowsTransparency="True" Background="White" Opacity="0"
+        Loaded="Window_Loaded">
+    <Grid Margin="10">
+        <!-- Place a close button in the top-right corner -->
+        <Button Content="X" Width="30" Height="30" 
+                HorizontalAlignment="Right" VerticalAlignment="Top" 
+                Click="CloseButton_Click"/>
+        <!-- Main Content -->
+        <StackPanel Margin="0,40,0,0">
+            <!-- Display team name -->
+            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="18" Margin="0,0,0,10"/>
+            <!-- Display FIFA code -->
+            <TextBlock Text="FIFA Code:" FontWeight="Bold"/>
+            <TextBlock Text="{Binding FifaCode}" Margin="0,0,0,10"/>
+
+            <!-- Games and Results -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Games: " FontWeight="Bold"/>
+                <TextBlock Text="{Binding Games}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Wins: " FontWeight="Bold"/>
+                <TextBlock Text="{Binding Wins}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Losses: " FontWeight="Bold"/>
+                <TextBlock Text="{Binding Losses}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Draws: " FontWeight="Bold"/>
+                <TextBlock Text="{Binding Draws}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Goals For: " FontWeight="Bold"/>
+                <TextBlock Text="{Binding GoalsFor}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Goals Against: " FontWeight="Bold"/>
+                <TextBlock Text="{Binding GoalsAgainst}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Goal Difference: " FontWeight="Bold"/>
+                <TextBlock Text="{Binding GoalDifference}"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
