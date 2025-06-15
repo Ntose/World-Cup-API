@@ -33,7 +33,7 @@
 
 
         <!-- Main content area placed below the settings tab -->
-        <StackPanel Orientation="Vertical" Margin="10"  VerticalAlignment="Top">
+        <StackPanel Orientation="Vertical" Margin="10,10,10,10">
 
             <!-- Team Selection Grid -->
             <Grid Margin="10">
@@ -81,11 +81,14 @@
               Click="LoadMatchPlayers_Click"/>
 
             <!-- Football Players Section -->
+
             <Grid Margin="10">
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Image Source="Images/football_field.jpg" Stretch="Fill" Margin="-20,0,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="596" />
 
                 <!-- Home Team Players Grid -->
                 <UniformGrid x:Name="HomePlayersGrid" 
@@ -100,8 +103,10 @@
                      Columns="1" 
                      Rows="11" 
                      Grid.Column="1" 
+                     Background="LightGray"
                      HorizontalAlignment="Right"/>
             </Grid>
         </StackPanel>
     </Grid>
+
 </Window>

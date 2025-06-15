@@ -31,9 +31,9 @@
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0" x:Name="ResolutionPanel" Visibility="Collapsed">
                 <TextBlock Text="Resolution:" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <ComboBox x:Name="ResolutionComboBox" Width="120" SelectedIndex="0">
-                    <ComboBoxItem Content="800 x 600" Tag="800x600"/>
-                    <ComboBoxItem Content="1024 x 768" Tag="1024x768"/>
-                    <ComboBoxItem Content="1280 x 720" Tag="1280x720"/>
+                    <ComboBoxItem Content="800 x 900" Tag="800x900"/>
+                    <ComboBoxItem Content="1024 x 968" Tag="1024x968"/>
+                    <ComboBoxItem Content="1280 x 920" Tag="1280x920"/>
                 </ComboBox>
             </StackPanel>
 

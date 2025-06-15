@@ -35,8 +35,6 @@ namespace WpfApp
 		private void MainWindow_Closing(object sender, CancelEventArgs e)
 		{
 			var confirmWindow = new ConfirmCloseWindow();
-			// Optionally, set the owner:
-			confirmWindow.Owner = this;
 			bool? result = confirmWindow.ShowDialog();
 			if (result != true)
 			{

@@ -50,78 +50,66 @@ namespace WpfApp
 			try
 			{
 				// Read Tournament selection.
-				string tournament = "men";
+				string championship = "men";
 				if (TournamentComboBox.SelectedItem is ComboBoxItem tItem)
 				{
-					// For example, we assume the content is "Men" or "Women"
-					tournament = tItem.Content.ToString().ToLowerInvariant();
+					// Expecting "Men" or "Women"
+					championship = tItem.Content.ToString().ToLowerInvariant();
 				}
 
 				// Read Language selection.
 				string language = "en";
 				if (LanguageComboBox.SelectedItem is ComboBoxItem langItem)
 				{
-					// We assume the Tag contains the language code (e.g., "en", "hr")
+					// Assuming Tag has the code, e.g. "en" or "hr"
 					language = langItem.Tag.ToString();
 				}
 
-				// Read Display Mode and Resolution.
-				string displayMode = "Fullscreen";
-				int width = 0, height = 0;
+				// Read Display Mode and resolution.
+				string windowSize = "fullscreen"; // default for fullscreen, for example
 				if (FullscreenRadioButton != null && FullscreenRadioButton.IsChecked == true)
 				{
-					displayMode = "Fullscreen";
+					windowSize = "fullscreen";
 				}
 				else if (WindowedRadioButton != null && WindowedRadioButton.IsChecked == true)
 				{
-					displayMode = "Windowed";
-					// Read the selected resolution.
+					// In windowed mode, read the resolution from ResolutionComboBox.
 					if (ResolutionComboBox?.SelectedItem is ComboBoxItem resItem)
 					{
 						string resTag = resItem.Tag?.ToString() ?? "1024x768";
-						var parts = resTag.Split('x');
-						if (parts.Length == 2 &&
-							int.TryParse(parts[0], out width) &&
-							int.TryParse(parts[1], out height))
-						{
-							// Valid resolution acquired.
-						}
-						else
-						{
-							// Fallback to 1024x768 if parsing fails.
-							width = 1024;
-							height = 768;
-						}
+						// We assume resTag is already in the format "WIDTHxHEIGHT"
+						windowSize = resTag;
+					}
+					else
+					{
+						windowSize = "1024x768";
 					}
 				}
 
-				// Create the settings instance.
+				// Create settings and save them.
+				// Note: We're not saving "DisplayMode", "Width", and "Height" separately now.
 				var settings = new DataLayer.Models.AppSettings
 				{
-					Tournament = tournament,
-					Language = language,
-					DisplayMode = displayMode,
-					Width = width,
-					Height = height
+					Tournament = championship,    // This will be read as SelectedChampionship
+					Language = language,          // This will be read as SelectedLanguage
+					DisplayMode = windowSize      // We'll treat DisplayMode property as holding the window size info.
 				};
 
 				// Save settings to file ("config.txt" in the working directory).
 				string filePath = "config.txt";
 				string[] lines = new string[]
 				{
-			$"Tournament={settings.Tournament}",
-			$"Language={settings.Language}",
-			$"DisplayMode={settings.DisplayMode}",
-			$"Width={settings.Width}",
-			$"Height={settings.Height}"
+			$"SelectedChampionship={settings.Tournament}",
+			$"SelectedLanguage={settings.Language}",
+			$"WindowSize={settings.DisplayMode}"
 				};
 
 				File.WriteAllLines(filePath, lines);
 
-				// For debugging purposes, show a confirmation message.
 				MessageBox.Show("Configuration saved successfully.", "Configuration", MessageBoxButton.OK, MessageBoxImage.Information);
 
 				DialogResult = true;
+				var MainWindow = Application.Current.MainWindow as MainWindow;
 				Close();
 			}
 			catch (Exception ex)
@@ -129,6 +117,7 @@ namespace WpfApp
 				MessageBox.Show("Error saving configuration: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
+
 
 
 		private void CancelButton_Click(object sender, RoutedEventArgs e)
