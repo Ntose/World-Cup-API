@@ -67,30 +67,48 @@ namespace WpfApp
             var teams = await ApiService.GetTeamsAsync(ConfigurationManager.SelectedChampionship);
             allTeams = teams; // store for later lookup
 
-            // Bind the full team objects to the ComboBox.
-            HomeTeamComboBox.ItemsSource = teams.OrderBy(t => t.Country).ToList();
-            HomeTeamComboBox.DisplayMemberPath = "Country";
+			// Bind the full team objects to the ComboBox.
 
-            try
-            {
-                if (teams.Any(t => t.Country == ConfigurationManager.SelectedTeam))
-                {
-                    var favTeam = teams.FirstOrDefault(t => t.Country == ConfigurationManager.FavoriteTeam);
-                    HomeTeamComboBox.SelectedItem = favTeam ?? teams.First();
-                }
-                else
-                {
-                    HomeTeamComboBox.SelectedIndex = 0;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error selecting default team: " + ex.Message,
-                                "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
+			// Ensure teams are loaded
+			if (teams == null || teams.Count == 0)
+			{
+				MessageBox.Show("No teams available to populate the ComboBox.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+				return;
+			}
 
-        private async void LoadMatchDataForSelectedTeam()
+			// Set ItemsSource
+			HomeTeamComboBox.ItemsSource = teams.OrderBy(t => t.Country).ToList();
+			HomeTeamComboBox.DisplayMemberPath = "Country";
+
+			// Debugging: Show available FifaCodes
+			string availableCodes = string.Join(", ", teams.Select(t => t.FifaCode));
+
+			try
+			{
+				// Ensure FavoriteTeamCode is valid
+				if (!string.IsNullOrWhiteSpace(ConfigurationManager.FavoriteTeamCode) &&
+					teams.Any(t => t.FifaCode == ConfigurationManager.FavoriteTeamCode))
+				{
+					int favTeamIndex = teams
+						.Select((team, index) => new { team, index })
+						.FirstOrDefault(x => x.team.FifaCode == ConfigurationManager.FavoriteTeamCode)?.index ?? 0;
+
+					HomeTeamComboBox.SelectedIndex = favTeamIndex;
+				}
+				else
+				{
+					HomeTeamComboBox.SelectedIndex = 1;
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Error selecting default team: " + ex.Message,
+								"Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+			}
+
+		}
+
+		private async void LoadMatchDataForSelectedTeam()
         {
             // Retrieve all matches for the championship.
             var matches = await ApiService.GetMatchesAsync(ConfigurationManager.SelectedChampionship);

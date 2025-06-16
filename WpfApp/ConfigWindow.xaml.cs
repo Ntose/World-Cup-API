@@ -73,9 +73,6 @@ namespace WpfApp
 				};
 
 				File.WriteAllLines("config.txt", lines);
-
-				MessageBox.Show("Configuration saved successfully.", "Configuration", MessageBoxButton.OK, MessageBoxImage.Information);
-
 				// Restart the MainWindow (your method for restarting the window)
 				RestartMainWindow();
 
