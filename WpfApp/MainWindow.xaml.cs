@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,15 +22,36 @@ namespace WpfApp
         // Store all teams so we can look up team info later.
         private List<Team> allTeams;
 
-
 		public MainWindow()
-        {
-            InitializeComponent();
-            LoadTeams();
+		{
+			InitializeComponent();
+			ConfigurationManager.LoadConfiguration();
+			LoadTeams();
 			this.Closing += MainWindow_Closing;
 			LoadMatchDataForSelectedTeam();
-            HomeTeamComboBox.SelectionChanged += HomeTeamComboBox_SelectionChanged;
-        }
+			HomeTeamComboBox.SelectionChanged += HomeTeamComboBox_SelectionChanged;
+
+			if (ConfigurationManager.WindowSize?.ToLower() == "fullscreen")
+			{
+				this.WindowState = WindowState.Maximized;
+				this.WindowStyle = WindowStyle.None;
+			}
+			else
+			{
+				// Assume the config file stores something like "1024x768"
+				var parts = ConfigurationManager.WindowSize?.Split('x');
+				if (parts != null && parts.Length == 2 &&
+					int.TryParse(parts[0], out int width) &&
+					int.TryParse(parts[1], out int height))
+				{
+					this.Width = width;
+					this.Height = height;
+					this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+					this.WindowStyle = WindowStyle.SingleBorderWindow;
+					this.WindowState = WindowState.Normal;
+				}
+			}
+		}
 		private void MainWindow_Closing(object sender, CancelEventArgs e)
 		{
 			var confirmWindow = new ConfirmCloseWindow();
@@ -42,7 +62,7 @@ namespace WpfApp
 				e.Cancel = true;
 			}
 		}
-		private async void LoadTeams()
+		public async void LoadTeams()
         {
             var teams = await ApiService.GetTeamsAsync(ConfigurationManager.SelectedChampionship);
             allTeams = teams; // store for later lookup
@@ -127,9 +147,9 @@ namespace WpfApp
                     OpposingTeamComboBox.SelectedIndex = 0;
 
                 Random random = new Random();
-                int homeGoals = random.Next(0, 4);
-                int awayGoals = random.Next(0, 4);
-                MatchResultTextBlock.Text = $"{homeGoals} - {awayGoals}";
+                int homeGoals = match.HomeTeamGoals;
+                int awayGoals = match.AwayTeamGoals;
+				MatchResultTextBlock.Text = $"{homeGoals} - {awayGoals}";
             }
             else
             {
@@ -352,16 +372,25 @@ namespace WpfApp
         private async Task<List<Player>> GetHomeTeamPlayers(string fifaCode)
         {
             var settings = ConfigManager.LoadSettings();
-            if (settings == null)
+            if (settings == null && ConfigurationManager.SelectedChampionship == "women")
             {
                 // Default settings when the file doesn't exist.
                 settings = new WorldCupStats.WinFormsApp.Helpers.AppSettings
                 {
                     Language = "en",
-                    Tournament = "men"
+                    Tournament = "women"
                 };
             }
-            try
+			if (settings == null && ConfigurationManager.SelectedChampionship == "men")
+			{
+				// Default settings when the file doesn't exist.
+				settings = new WorldCupStats.WinFormsApp.Helpers.AppSettings
+				{
+					Language = "en",
+					Tournament = "men"
+				};
+			}
+			try
             {
                 string url = $"https://worldcup-vua.nullbit.hr/{settings.Tournament}/matches/country?fifa_code={fifaCode}";
                 System.Diagnostics.Debug.WriteLine("Constructed URL: " + url);
@@ -445,18 +474,36 @@ namespace WpfApp
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            // For testing purposes, add a dummy player control.
-            var dummyPlayer = new Player
-            {
-                Name = "Test Player",
-                ShirtNumber = 10,
-                Position = "Midfield",
-                Captain = true,
-                ImagePath = ""
-            };
-            var playerControl = new PlayerControl(dummyPlayer);
-            HomePlayersGrid.Children.Clear();
-            HomePlayersGrid.Children.Add(playerControl);
-        }
-    }
+			// Load configuration (assuming this sets ConfigurationManager.WindowSize).
+			ConfigurationManager.LoadConfiguration();
+
+			if (ConfigurationManager.WindowSize.ToLower() == "fullscreen")
+			{
+				this.WindowState = WindowState.Maximized;
+				this.WindowStyle = WindowStyle.None;
+			}
+			else
+			{
+				// Assume the value is formatted as "WIDTHxHEIGHT"
+				var parts = ConfigurationManager.WindowSize.Split('x');
+				if (parts.Length == 2 &&
+					int.TryParse(parts[0], out int width) &&
+					int.TryParse(parts[1], out int height))
+				{
+					this.Width = width;
+					this.Height = height;
+					this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+					this.WindowStyle = WindowStyle.SingleBorderWindow;
+					this.WindowState = WindowState.Normal;
+				}
+				else
+				{
+					// Default fallback values
+					this.Width = 1024;
+					this.Height = 968;
+				}
+			}
+
+		}
+	}
 }

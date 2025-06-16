@@ -45,10 +45,10 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Home Team Section -->
-                <StackPanel Grid.Column="0" HorizontalAlignment="Left" Margin="110,20,0,20">
+                <StackPanel Grid.Column="0" HorizontalAlignment="Left" Margin="10,20,0,20">
                     <TextBlock Text="Home Team:" FontWeight="Bold" Margin="0,0,0,5" />
                     <StackPanel Orientation="Horizontal">
-                        <ComboBox x:Name="HomeTeamComboBox" Width="200"/>
+                        <ComboBox x:Name="HomeTeamComboBox" Width="138"/>
                         <Button Content="Team Info" Margin="5,0,0,0" Click="HomeTeamInfoButton_Click"/>
                     </StackPanel>
                 </StackPanel>
@@ -61,7 +61,7 @@
                 <StackPanel Grid.Column="3" HorizontalAlignment="Center" Margin="0,20,0,20">
                     <TextBlock Text="Opposing Team:" FontWeight="Bold" Margin="0,0,0,5"/>
                     <StackPanel Orientation="Horizontal">
-                        <ComboBox x:Name="OpposingTeamComboBox" Width="200" 
+                        <ComboBox x:Name="OpposingTeamComboBox" Width="138" 
                       SelectionChanged="OpposingTeamComboBox_SelectionChanged"/>
                         <Button Content="Team Info" Margin="5,0,0,0" Click="OpponentTeamInfoButton_Click"/>
                     </StackPanel>

@@ -49,67 +49,37 @@ namespace WpfApp
 		{
 			try
 			{
-				// Read Tournament selection.
-				string championship = "men";
-				if (TournamentComboBox.SelectedItem is ComboBoxItem tItem)
+				// Read championship and language from the combo boxes.
+				string championship =
+					(TournamentComboBox.SelectedItem as ComboBoxItem)?.Content.ToString().ToLowerInvariant() ?? "men";
+				string language =
+					(LanguageComboBox.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "en";
+
+				// Determine the window size.
+				// If fullscreen radio is checked, store "fullscreen".
+				// Otherwise, store the resolution string from the resolution combo.
+				string windowSize = "fullscreen";
+				if (WindowedRadioButton != null && WindowedRadioButton.IsChecked == true)
 				{
-					// Expecting "Men" or "Women"
-					championship = tItem.Content.ToString().ToLowerInvariant();
+					windowSize = (ResolutionComboBox?.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "1024x768";
 				}
 
-				// Read Language selection.
-				string language = "en";
-				if (LanguageComboBox.SelectedItem is ComboBoxItem langItem)
-				{
-					// Assuming Tag has the code, e.g. "en" or "hr"
-					language = langItem.Tag.ToString();
-				}
-
-				// Read Display Mode and resolution.
-				string windowSize = "fullscreen"; // default for fullscreen, for example
-				if (FullscreenRadioButton != null && FullscreenRadioButton.IsChecked == true)
-				{
-					windowSize = "fullscreen";
-				}
-				else if (WindowedRadioButton != null && WindowedRadioButton.IsChecked == true)
-				{
-					// In windowed mode, read the resolution from ResolutionComboBox.
-					if (ResolutionComboBox?.SelectedItem is ComboBoxItem resItem)
-					{
-						string resTag = resItem.Tag?.ToString() ?? "1024x768";
-						// We assume resTag is already in the format "WIDTHxHEIGHT"
-						windowSize = resTag;
-					}
-					else
-					{
-						windowSize = "1024x768";
-					}
-				}
-
-				// Create settings and save them.
-				// Note: We're not saving "DisplayMode", "Width", and "Height" separately now.
-				var settings = new DataLayer.Models.AppSettings
-				{
-					Tournament = championship,    // This will be read as SelectedChampionship
-					Language = language,          // This will be read as SelectedLanguage
-					DisplayMode = windowSize      // We'll treat DisplayMode property as holding the window size info.
-				};
-
-				// Save settings to file ("config.txt" in the working directory).
-				string filePath = "config.txt";
+				// Save configuration as three lines in config.txt.
 				string[] lines = new string[]
 				{
-			$"SelectedChampionship={settings.Tournament}",
-			$"SelectedLanguage={settings.Language}",
-			$"WindowSize={settings.DisplayMode}"
+			$"SelectedChampionship={championship}",
+			$"SelectedLanguage={language}",
+			$"WindowSize={windowSize}"
 				};
 
-				File.WriteAllLines(filePath, lines);
+				File.WriteAllLines("config.txt", lines);
 
 				MessageBox.Show("Configuration saved successfully.", "Configuration", MessageBoxButton.OK, MessageBoxImage.Information);
 
+				// Restart the MainWindow (your method for restarting the window)
+				RestartMainWindow();
+
 				DialogResult = true;
-				var MainWindow = Application.Current.MainWindow as MainWindow;
 				Close();
 			}
 			catch (Exception ex)
@@ -118,6 +88,21 @@ namespace WpfApp
 			}
 		}
 
+
+		private void RestartMainWindow()
+		{
+			// Get the current MainWindow instance
+			var currentMainWindow = Application.Current.MainWindow as MainWindow;
+			if (currentMainWindow != null)
+			{
+				currentMainWindow.Close(); // Close the existing MainWindow
+			}
+
+			// Create a new MainWindow instance
+			MainWindow newMainWindow = new MainWindow();
+			Application.Current.MainWindow = newMainWindow; // Set it as the new main window
+			newMainWindow.Show(); // Show the new MainWindow
+		}
 
 
 		private void CancelButton_Click(object sender, RoutedEventArgs e)
